@@ -1,5 +1,5 @@
 import { db as adminDb } from "@/lib/firebase/server";
-import { DocumentData } from "firebase-admin/firestore";
+import { DocumentData, QueryDocumentSnapshot } from "firebase-admin/firestore";
 
 const PRODUCTS = "products";
 
@@ -17,7 +17,7 @@ export async function getProductsServer(): Promise<ProductRecord[]> {
     .collection(PRODUCTS)
     .orderBy("createdAt", "desc")
     .get();
-  return snap.docs.map((d) => ({
+  return snap.docs.map((d: QueryDocumentSnapshot) => ({
     id: d.id,
     ...(d.data() as DocumentData),
   })) as ProductRecord[];

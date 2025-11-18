@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase/client";
 import { isAllowedAdmin } from "@/lib/firebase/whitelist";
 
 export default function AdminLayout({
@@ -15,22 +14,29 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        setAuthorized(false);
-        router.push("/admin/login");
-        return;
-      }
-      if (!isAllowedAdmin(user.email)) {
-        // not allowed
-        setAuthorized(false);
-        router.push("/admin/login");
-        return;
-      }
-      setAuthorized(true);
-    });
+    let unsub: (() => void) | undefined;
 
-    return () => unsub();
+    (async () => {
+      const { auth } = await import("@/lib/firebase/client");
+      unsub = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          setAuthorized(false);
+          router.push("/admin/login");
+          return;
+        }
+        if (!isAllowedAdmin(user.email)) {
+          // not allowed
+          setAuthorized(false);
+          router.push("/admin/login");
+          return;
+        }
+        setAuthorized(true);
+      });
+    })();
+
+    return () => {
+      if (typeof unsub === "function") unsub();
+    };
   }, [router]);
 
   if (authorized === null) return <div>Checking auth...</div>;
