@@ -1,0 +1,34 @@
+"use client";
+
+import Image from "next/image";
+import React from "react";
+
+type CardProps = {
+  src: string;
+  title?: string;
+  alt?: string;
+};
+
+export default function Card({
+  src,
+  title = "WPC Door",
+  alt = "product",
+}: CardProps) {
+  return (
+    <article className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="w-full h-56 bg-gray-100 relative">
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1440px) 50vw, 25vw"
+          className="object-cover"
+        />
+      </div>
+
+      <div className="p-4">
+        <h3 className="text-sm font-medium text-gray-900">{title}</h3>
+      </div>
+    </article>
+  );
+}
