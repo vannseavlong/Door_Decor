@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="mt-12 bg-linear-to-b from-[#123775] to-[#0f2f66] text-white">
+    <footer className="mt-12 bg-[#f7941d] from-[#123775] to-[#0f2f66] text-white">
       <div className="mx-auto px-6 py-12" style={{ maxWidth: 1440 }}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
