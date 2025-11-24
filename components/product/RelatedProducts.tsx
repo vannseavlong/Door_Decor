@@ -1,0 +1,33 @@
+import React from "react";
+import Link from "next/link";
+import Card from "@/components/website/Card";
+import { Product } from "@/types/product";
+
+type Props = { products: Product[]; currentId?: string };
+
+export default function RelatedProducts({ products, currentId }: Props) {
+  const items = products.filter((p) => p.id !== currentId).slice(0, 4);
+
+  if (!items.length) return null;
+
+  return (
+    <section className="mt-12">
+      <h3 className="text-xl font-semibold mb-4">Related Products</h3>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {items.map((p) => (
+          <div key={p.id}>
+            <Link href={`/product/${p.id}`} className="block">
+              {/* Render image + title using Card (no internal link) */}
+              <Card src={p.imageUrl ?? "/imageStock/img1.jpg"} title={p.name} />
+            </Link>
+
+            <div className="mt-2">
+              <div className="text-sm font-medium text-[#1A1A1A]">{p.name}</div>
+              <div className="text-xs text-gray-500">{p.category}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}

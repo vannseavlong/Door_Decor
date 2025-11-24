@@ -1,7 +1,10 @@
-"use client";
-
 import React from "react";
-import Card from "@/components/public/Card";
+import Card from "@/components/website/Card";
+import { Product } from "@/types/product";
+
+type Props = {
+  products?: Product[];
+};
 
 const IMGS = [
   "/imageStock/img1.jpg",
@@ -16,7 +19,16 @@ const IMGS = [
   "/imageStock/img10.jpg",
 ];
 
-export default function ProductsSection() {
+export default function ProductsSection({ products }: Props) {
+  const items =
+    products && products.length
+      ? products
+      : IMGS.map((src, idx) => ({
+          id: String(idx + 1),
+          name: "WPC Door",
+          imageUrl: src,
+        }));
+
   return (
     <section className="w-full py-16">
       <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
@@ -26,8 +38,13 @@ export default function ProductsSection() {
         </div>
 
         <div className="grid gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {IMGS.map((src, idx) => (
-            <Card key={src + idx} src={src} />
+          {items.map((p, idx) => (
+            <Card
+              key={((p as Product).id as string) ?? String(idx)}
+              src={(p as Product).imageUrl ?? IMGS[idx % IMGS.length]}
+              title={(p as Product).name ?? "Product"}
+              id={(p as Product).id}
+            />
           ))}
         </div>
       </div>

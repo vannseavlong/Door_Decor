@@ -1,8 +1,8 @@
 import React from "react";
-import Hero from "@/components/public/Hero";
-import ProductsSection from "@/components/public/ProductsSection";
-import ContactSection from "@/components/public/ContactSection";
-import LocationSection from "@/components/public/LocationSection";
+import Hero from "@/components/website/Hero";
+import ProductsSection from "@/components/website/ProductsSection";
+import ContactSection from "@/components/website/ContactSection";
+import LocationSection from "@/components/website/LocationSection";
 
 export default function Page() {
   return (

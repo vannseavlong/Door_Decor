@@ -10,7 +10,7 @@ export default function Hero() {
   return (
     <section className="w-full py-20">
       <div
-        className="mx-auto flex w-full items-center gap-12 px-4"
+        className="mx-auto flex w-full items-center gap-12"
         style={{ maxWidth: 1440 }}
       >
         <div className="flex-1 max-w-xl">
@@ -36,7 +36,7 @@ export default function Hero() {
       </div>
 
       {/* mobile image (stacked) */}
-      <div className="mx-auto mt-8 px-4 md:hidden" style={{ maxWidth: 720 }}>
+      <div className="mx-auto mt-8 md:hidden" style={{ maxWidth: 720 }}>
         <Image
           src="/hero_door.png"
           alt="hero"

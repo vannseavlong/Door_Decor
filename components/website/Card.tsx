@@ -2,21 +2,29 @@
 
 import Image from "next/image";
 import React from "react";
+import Link from "next/link";
 
 type CardProps = {
   src: string;
   title?: string;
   alt?: string;
+  /** either provide `id` to link to `/product/[id]` or a full `href` */
+  id?: string;
+  href?: string;
 };
 
 export default function Card({
   src,
   title = "WPC Door",
   alt = "product",
+  id,
+  href,
 }: CardProps) {
-  return (
+  const link = href ? href : id ? `/product/${id}` : undefined;
+
+  const content = (
     <article className="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className="w-full h-56 bg-gray-100 relative">
+      <div className="w-full aspect-square bg-gray-100 relative">
         <Image
           src={src}
           alt={alt}
@@ -31,4 +39,14 @@ export default function Card({
       </div>
     </article>
   );
+
+  if (link) {
+    return (
+      <Link href={link} aria-label={`Open ${title}`} className="block">
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }

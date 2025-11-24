@@ -21,8 +21,8 @@ Email: ${email}`);
   }
 
   return (
-    <section className="w-full py-16 bg-gray-50">
-      <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
+    <section className="w-full py-16">
+      <div className="mx-auto" style={{ maxWidth: 1440 }}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           <div>
             <h2 className="text-2xl font-semibold text-gray-900">Contact Us</h2>
@@ -183,7 +183,7 @@ Email: ${email}`);
                 />
 
                 <div className="flex items-center justify-end">
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded">
+                  <button className="px-4 py-2 bg-[#f7942d] text-white shadow-sm rounded-sm hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#f7942d]">
                     Send message
                   </button>
                 </div>

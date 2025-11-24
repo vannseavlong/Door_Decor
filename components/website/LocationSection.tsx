@@ -13,7 +13,7 @@ export default function LocationSection() {
 
   return (
     <section className="w-full py-16">
-      <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
+      <div className="mx-auto" style={{ maxWidth: 1440 }}>
         <h2 className="text-2xl font-semibold text-center text-gray-900 mb-6">
           Our Location
         </h2>
