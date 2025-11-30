@@ -1,74 +1,29 @@
 // Firebase configuration
-// Replace these with your actual Firebase project credentials
-// Get these from: Firebase Console > Project Settings > General > Your apps
+// This file builds a firebaseConfig object from environment variables.
+// Client-safe variables must use the `NEXT_PUBLIC_` prefix so they are
+// available in browser code (e.g. `NEXT_PUBLIC_FIREBASE_API_KEY`).
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "",
 };
 
-// PRODUCTION SETUP INSTRUCTIONS:
-// 1. Install Firebase: npm install firebase
-// 2. Create a Firebase project at https://console.firebase.google.com
-// 3. Enable Authentication (Email/Password)
-// 4. Create Firestore Database
-// 5. Enable Firebase Storage and set up security rules
-// 6. Copy your config from Firebase Console and replace the values above
-// 7. Uncomment the imports and exports below
-// 8. Comment out or remove the mock implementations
+const isFirebaseConfigured = Boolean(
+  firebaseConfig.apiKey && firebaseConfig.projectId
+);
 
-// Mock Firebase implementation for demonstration
-// In production, uncomment the imports below and initialize Firebase properly
+if (!isFirebaseConfigured) {
+  // Provide a clear runtime hint so developers know to set env vars.
+  // This will run on both server and client builds where this module is imported.
+  // Avoid throwing so the dev server can still boot; we provide mocked helpers elsewhere.
+  // eslint-disable-next-line no-console
+  console.warn(
+    "Firebase client config is missing. Set environment variables from .env.example or provide real credentials."
+  );
+}
 
-/*
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
-
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-*/
-
-// Mock implementations for development
-export const auth = {
-  currentUser: null as any,
-  signInWithEmailAndPassword: async (email: string, password: string) => {
-    return { user: { uid: 'mock-user-id', email } };
-  },
-  signOut: async () => {
-    return Promise.resolve();
-  },
-  onAuthStateChanged: (callback: any) => {
-    const unsubscribe = () => {};
-    return unsubscribe;
-  }
-};
-
-export const db = {
-  collection: (name: string) => ({
-    get: async () => ({ docs: [] }),
-    doc: (id: string) => ({
-      get: async () => ({ exists: true, data: () => ({}) }),
-      set: async (data: any) => Promise.resolve(),
-      update: async (data: any) => Promise.resolve(),
-      delete: async () => Promise.resolve()
-    }),
-    add: async (data: any) => ({ id: 'new-id' })
-  })
-};
-
-export const storage = {
-  ref: (path: string) => ({
-    put: async (file: File) => ({ ref: { getDownloadURL: async () => 'mock-url' } }),
-    getDownloadURL: async () => 'mock-url'
-  })
-};
-
-export { firebaseConfig };
+export { firebaseConfig, isFirebaseConfigured };

@@ -1,13 +1,13 @@
+"use client";
+
 import React, { useState } from "react";
 import { Lock, Mail } from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
-import { toast } from "sonner@2.0.3";
+import { useAuth } from "../../../lib/contexts/AuthContext";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-interface LoginProps {
-  onNavigate: (page: string) => void;
-}
-
-export const Login: React.FC<LoginProps> = ({ onNavigate }) => {
+export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export const Login: React.FC<LoginProps> = ({ onNavigate }) => {
       // In production, this will authenticate with Firebase
       await login(email, password);
       toast.success("Login successful!");
-      onNavigate("admin-dashboard");
+      router.push("/(admin-portal)/dashboard");
     } catch (error) {
       toast.error("Login failed. Please check your credentials.");
     } finally {
@@ -86,7 +86,7 @@ export const Login: React.FC<LoginProps> = ({ onNavigate }) => {
 
           <div className="mt-6 text-center">
             <button
-              onClick={() => onNavigate("home")}
+              onClick={() => router.push("/")}
               className="text-orange-500 hover:text-orange-600"
             >
               Back to Home
@@ -105,4 +105,4 @@ export const Login: React.FC<LoginProps> = ({ onNavigate }) => {
       </div>
     </div>
   );
-};
+}
