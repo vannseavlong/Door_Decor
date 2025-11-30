@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +21,29 @@ export default function LoginPage() {
       // For demo purposes, accept any email/password
       // In production, this will authenticate with Firebase
       await login(email, password);
+
+      // After sign-in, validate that the email is allowed to access admin.
+      // This check is done server-side via an API route that reads secure env vars.
+      const res = await fetch("/api/admin/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        // If the check fails, sign out immediately and show error.
+        await logout();
+        toast.error("Your account is not allowed to access the admin panel.");
+        return;
+      }
+
+      const data = await res.json();
+      if (!data.allowed) {
+        await logout();
+        toast.error("Your account is not allowed to access the admin panel.");
+        return;
+      }
+
       toast.success("Login successful!");
       router.push("/(admin-portal)/dashboard");
     } catch (error) {

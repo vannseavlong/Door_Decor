@@ -8,6 +8,7 @@ export default function AdminDashboardPage() {
       <p className="mt-4 text-sm text-gray-600">Welcome to the admin area.</p>
     </div>
   );
+}
 // }import React, { useState } from 'react';
 // import { LogOut, Plus, Edit2, Trash2, Home, Package, Mail } from 'lucide-react';
 // import { useAuth } from '../../contexts/AuthContext';
@@ -72,7 +73,7 @@ export default function AdminDashboardPage() {
 //   const handleSaveProduct = (e: React.FormEvent<HTMLFormElement>) => {
 //     e.preventDefault();
 //     const formData = new FormData(e.currentTarget);
-    
+
 //     // Validate that we have at least the main image
 //     if (!productFormData.mainImage) {
 //       toast.error('Please upload a main product image');
@@ -208,9 +209,9 @@ export default function AdminDashboardPage() {
 //                   {products.map((product) => (
 //                     <tr key={product.id} className="hover:bg-gray-50">
 //                       <td className="px-6 py-4">
-//                         <img 
-//                           src={product.imageUrl} 
-//                           alt={product.name} 
+//                         <img
+//                           src={product.imageUrl}
+//                           alt={product.name}
 //                           className="w-16 h-16 object-cover rounded"
 //                         />
 //                       </td>
@@ -266,7 +267,7 @@ export default function AdminDashboardPage() {
 //                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
 //                 ></textarea>
 //               </div>
-              
+
 //               {/* Hero Image Upload */}
 //               <ImageUpload
 //                 label="Hero Section Image"
@@ -391,4 +392,3 @@ export default function AdminDashboardPage() {
 //     </div>
 //   );
 // };
-

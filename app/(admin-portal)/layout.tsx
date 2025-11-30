@@ -21,13 +21,13 @@ export default function AdminLayout({
       unsub = onAuthStateChanged(auth, (user) => {
         if (!user) {
           setAuthorized(false);
-          router.push("/admin/login");
+          router.push("/login");
           return;
         }
         if (!isAllowedAdmin(user.email)) {
           // not allowed
           setAuthorized(false);
-          router.push("/admin/login");
+          router.push("/login");
           return;
         }
         setAuthorized(true);
