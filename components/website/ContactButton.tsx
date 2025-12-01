@@ -57,7 +57,7 @@ export default function ContactButton({
     <a
       href={href}
       onClick={onClick ? onClick : handleClick}
-      className={`group inline-flex items-center justify-center leading-7 px-4 py-2 bg-[#f7942d] text-white border border-transparent hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#f7942d] ${className}`}
+      className={`group inline-flex items-center justify-center leading-7 px-4 py-2 bg-brand-primary text-white border border-transparent hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary transition-all body-base font-medium font-khmer ${className}`}
     >
       {inner}
     </a>

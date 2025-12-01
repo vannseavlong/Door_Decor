@@ -10,21 +10,31 @@ type Props = { product: Product };
 export default function ProductDetails({ product }: Props) {
   return (
     <div>
-      <h1 className="text-3xl font-bold">{product.name}</h1>
-      <p className="mt-2 text-xl text-gray-700">${product.price}</p>
+      <h1 className="heading-2 text-brand-dark font-khmer">{product.name}</h1>
+      <p
+        className="heading-5 text-brand-secondary"
+        style={{ marginTop: "var(--space-2)" }}
+      >
+        ${product.price}
+      </p>
       {product.category && (
-        <p className="mt-1 text-sm text-gray-500">
+        <p
+          className="body-sm text-gray-500"
+          style={{ marginTop: "var(--space-1)" }}
+        >
           Category: {product.category}
         </p>
       )}
 
       {/* Description or placeholder */}
-      <div className="mt-4 text-gray-700">
+      <div className="mt-4">
         {/* If product.description exists show it */}
         {product.description ? (
-          <p className="text-sm text-gray-700">{product.description}</p>
+          <p className="body-base text-gray-700 font-khmer">
+            {product.description}
+          </p>
         ) : (
-          <p className="text-sm text-gray-600">No description available.</p>
+          <p className="body-sm text-gray-600">No description available.</p>
         )}
       </div>
 
@@ -32,8 +42,8 @@ export default function ProductDetails({ product }: Props) {
       {Array.isArray(product.specifications) &&
         product.specifications.length > 0 && (
           <div className="mt-6">
-            <h2 className="font-semibold mb-2">Specifications</h2>
-            <dl className="grid grid-cols-1 gap-y-2 text-sm text-gray-600">
+            <h2 className="heading-6 text-brand-dark mb-2">Specifications</h2>
+            <dl className="grid grid-cols-1 gap-y-2 body-sm text-gray-600">
               {product.specifications.map((s, idx) => (
                 <div key={idx} className="flex gap-2">
                   <dt className="font-medium w-40">{s.label}:</dt>
@@ -47,12 +57,12 @@ export default function ProductDetails({ product }: Props) {
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
           href="/"
-          className="inline-block bg-gray-800 text-white px-4 py-2 rounded-md"
+          className="inline-block bg-brand-secondary text-white px-4 py-2 rounded-md hover:brightness-95 transition-all body-base font-medium"
         >
           Back
         </Link>
 
-        <ContactButton className="bg-[#f7942d] text-white px-4 py-2 rounded-md" />
+        <ContactButton className="bg-brand-primary text-white px-4 py-2 rounded-md" />
       </div>
     </div>
   );

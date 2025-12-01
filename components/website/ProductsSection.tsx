@@ -1,6 +1,10 @@
 import React from "react";
 import Card from "@/components/website/Card";
+import Link from "next/link";
 import { Product } from "@/types/product";
+import dummyProducts, {
+  CATEGORIES as DUMMY_CATEGORIES,
+} from "@/data/data-dummy";
 
 type Props = {
   products?: Product[];
@@ -20,31 +24,70 @@ const IMGS = [
 ];
 
 export default function ProductsSection({ products }: Props) {
-  const items =
-    products && products.length
-      ? products
-      : IMGS.map((src, idx) => ({
-          id: String(idx + 1),
-          name: "WPC Door",
-          imageUrl: src,
-        }));
+  // use passed products when available; otherwise fall back to local dummy data
+  const items: Product[] =
+    products && products.length ? products : dummyProducts;
+
+  // group products by category
+  const grouped = items.reduce((acc: Record<string, Product[]>, p) => {
+    const cat = p.category ?? "Uncategorized";
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(p);
+    return acc;
+  }, {});
+
+  // order categories: prefer known categories from data-dummy, then the rest
+  const categories = [
+    ...DUMMY_CATEGORIES.filter((c) => grouped[c]),
+    ...Object.keys(grouped).filter((k) => !DUMMY_CATEGORIES.includes(k)),
+  ];
+
+  const slugify = (s: string) =>
+    encodeURIComponent(
+      s
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "")
+    );
 
   return (
-    <section className="w-full py-16">
-      <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
+    <section className="w-full py-12 md:py-16">
+      <div className="" style={{ maxWidth: 1440 }}>
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900">Products</h2>
-          <p className="mt-2 text-gray-600">Explore our product gallery</p>
+          <h2 className="heading-2 text-brand-dark font-khmer">Products</h2>
+          <p
+            className="body-base text-gray-600 font-khmer"
+            style={{ marginTop: "var(--space-2)" }}
+          >
+            Explore our product gallery
+          </p>
         </div>
 
-        <div className="grid gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {items.map((p, idx) => (
-            <Card
-              key={((p as Product).id as string) ?? String(idx)}
-              src={(p as Product).imageUrl ?? IMGS[idx % IMGS.length]}
-              title={(p as Product).name ?? "Product"}
-              id={(p as Product).id}
-            />
+        <div className="space-y-10">
+          {categories.map((cat) => (
+            <div key={cat}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="heading-3 text-brand-dark font-khmer">{cat}</h3>
+                <Link
+                  href={`/products/category/${slugify(cat)}`}
+                  className="body-sm text-brand-secondary hover-brand-primary hover:underline transition-colors"
+                  aria-label={`View products in ${cat}`}
+                >
+                  View all
+                </Link>
+              </div>
+
+              <div className="grid gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {grouped[cat].map((p, idx) => (
+                  <Card
+                    key={p.id ?? `${cat}-${idx}`}
+                    src={p.imageUrl ?? IMGS[idx % IMGS.length]}
+                    title={p.name}
+                    id={p.id}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </div>

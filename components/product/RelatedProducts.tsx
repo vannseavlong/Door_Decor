@@ -6,13 +6,27 @@ import { Product } from "@/types/product";
 type Props = { products: Product[]; currentId?: string };
 
 export default function RelatedProducts({ products, currentId }: Props) {
-  const items = products.filter((p) => p.id !== currentId).slice(0, 4);
+  // If caller passed full product list, try to find the current product and
+  // select related items from the same category. Otherwise fall back to the
+  // simple exclude-self behavior.
+  const current = products.find((p) => p.id === currentId);
+
+  let items: Product[] = [];
+  if (current && current.category) {
+    items = products
+      .filter((p) => p.category === current.category && p.id !== currentId)
+      .slice(0, 4);
+  } else {
+    items = products.filter((p) => p.id !== currentId).slice(0, 4);
+  }
 
   if (!items.length) return null;
 
   return (
     <section className="mt-12">
-      <h3 className="text-xl font-semibold mb-4">Related Products</h3>
+      <h3 className="heading-4 text-brand-dark mb-4 font-khmer">
+        Related Products
+      </h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {items.map((p) => (
           <div key={p.id}>
@@ -21,10 +35,10 @@ export default function RelatedProducts({ products, currentId }: Props) {
               <Card src={p.imageUrl ?? "/imageStock/img1.jpg"} title={p.name} />
             </Link>
 
-            <div className="mt-2">
+            {/* <div className="mt-2">
               <div className="text-sm font-medium text-[#1A1A1A]">{p.name}</div>
               <div className="text-xs text-gray-500">{p.category}</div>
-            </div>
+            </div> */}
           </div>
         ))}
       </div>

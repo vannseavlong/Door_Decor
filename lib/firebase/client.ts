@@ -1,16 +1,24 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, getApps, type FirebaseOptions } from "firebase/app";
+import { getAuth, type Auth } from "firebase/auth";
+import { getFirestore, type Firestore } from "firebase/firestore";
+import { firebaseConfig, isFirebaseConfigured } from "../config/firebase";
 
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FB_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FB_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FB_PROJECT,
-};
+// Log configuration status for debugging
+if (typeof window !== "undefined") {
+  console.log("Firebase configured:", isFirebaseConfigured);
+  console.log("Firebase config:", {
+    apiKey: firebaseConfig.apiKey
+      ? "***" + firebaseConfig.apiKey.slice(-4)
+      : "missing",
+    projectId: firebaseConfig.projectId || "missing",
+    authDomain: firebaseConfig.authDomain || "missing",
+  });
+}
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+// Initialize Firebase app using environment-provided config (must be set in .env.local)
+const app = !getApps().length
+  ? initializeApp(firebaseConfig as FirebaseOptions)
+  : getApps()[0];
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-
-// Client helpers (optional) can live in lib/firebase/auth.ts
+export const auth: Auth = getAuth(app);
+export const db: Firestore = getFirestore(app);

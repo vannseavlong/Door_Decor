@@ -5,12 +5,14 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="mt-12 bg-[#f7941d] from-[#123775] to-[#0f2f66] text-white">
+    <footer className="mt-12 bg-brand-primary text-white">
       <div className="mx-auto px-6 py-12" style={{ maxWidth: 1440 }}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4">Wonder Door Industrial</h3>
-            <p className="text-sm text-white/85 leading-relaxed">
+            <h3 className="heading-4 mb-4 font-khmer">
+              Wonder Door Industrial
+            </h3>
+            <p className="body-sm text-white/90 leading-relaxed font-khmer">
               Wonder Door Industrial និងផ្តល់ផលិតផលទ្វារមានគុណភាពខ្ពស់
               សម្រាប់ទីផ្សារមន្រ្តីនិង ការរស់នៅស៊ីវិល។ Leading you to the door
               of the future with modern, contemporary living and international
@@ -19,56 +21,108 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="heading-6 mb-4">Quick Links</h4>
+            <ul className="space-y-2 body-sm">
               <li>
-                <a href="/about" className="text-white/90 hover:underline">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="/services" className="text-white/90 hover:underline">
-                  Services
-                </a>
-              </li>
-              <li>
-                <Link href="/product" className="text-white/90 hover:underline">
-                  Products
+                <Link
+                  href="/products/category/interior-doors"
+                  className="text-white/90 hover:underline"
+                >
+                  Interior Doors
                 </Link>
               </li>
               <li>
-                <a href="#contact" className="text-white/90 hover:underline">
-                  Contact
-                </a>
+                <Link
+                  href="/products/category/exterior-doors"
+                  className="text-white/90 hover:underline"
+                >
+                  Exterior Doors
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products/category/hardware"
+                  className="text-white/90 hover:underline"
+                >
+                  Hardware
+                </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
-            <div className="text-sm space-y-3">
-              <div>
-                <span className="font-medium">Email: </span>
-                <a href="mailto:info@yourcompany.com" className="text-white/90">
-                  info@yourcompany.com
+            <h4 className="heading-6 mb-4">Contact Us</h4>
+            <div className="body-sm space-y-3">
+              <div className="font-khmer">
+                <span className="font-medium">លេខទូរសព្ទ៖ </span>
+                <a
+                  href="tel:070943838"
+                  className="text-white/90 hover:underline"
+                >
+                  070 94 38 38
+                </a>{" "}
+                /
+                <a
+                  href="tel:060943838"
+                  className="text-white/90 hover:underline"
+                >
+                  060 94 3838
+                </a>{" "}
+                /
+                <a
+                  href="tel:017943838"
+                  className="text-white/90 hover:underline"
+                >
+                  017 94 3838
                 </a>
               </div>
 
               <div>
-                <span className="font-medium">Phone: </span>
-                <a href="tel:+85587663168" className="text-white/90">
-                  +855 87 663 168
+                <span className="font-medium">Facebook Page: </span>
+                <a
+                  href="https://www.facebook.com/share/1GAKNhff5A/?mibextid=wwXIfr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/90 hover:underline"
+                >
+                  Facebook
+                </a>
+              </div>
+              <div>
+                <span className="font-medium">TikTok: </span>
+                <a
+                  href="https://www.tiktok.com/@cwww47?_r=1&_t=ZS-91ismvdbeDQ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/90 hover:underline"
+                >
+                  TikTok
+                </a>
+              </div>
+              <div>
+                <span className="font-medium">Telegram Channel: </span>
+                <a
+                  href="https://t.me/BNb11342"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/90 hover:underline"
+                >
+                  BNb11342
+                </a>
+              </div>
+              <div>
+                <span className="font-medium">Telegram Account: </span>
+                <a
+                  href="https://t.me/TC1919"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/90 hover:underline"
+                >
+                  @TC1919
                 </a>
               </div>
 
-              <div>
-                <span className="font-medium">Address: </span>
-                <span className="text-white/90">
-                  123 Business Street, Phnom Penh
-                </span>
-              </div>
-
-              <div className="pt-4">
+              {/* <div className="pt-4">
                 <div className="flex items-center gap-3">
                   <a
                     href="https://www.facebook.com/"
@@ -182,12 +236,12 @@ export default function Footer() {
                     </svg>
                   </a>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-6 text-sm text-white/80 flex items-center justify-between">
+        <div className="mt-8 border-t border-white/10 pt-6 body-sm text-white/80 flex items-center justify-between">
           <span>
             © {new Date().getFullYear()} Wonder Door Industrial. All rights
             reserved.
