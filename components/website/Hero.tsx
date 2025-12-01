@@ -8,17 +8,22 @@ export default function Hero() {
   const { t } = useTranslate();
 
   return (
-    <section className="w-full py-20">
+    <section className="w-full py-12 md:py-20">
       <div
-        className="mx-auto flex w-full items-center gap-12"
+        className="mx-auto flex w-full items-center gap-8 md:gap-12 px-4"
         style={{ maxWidth: 1440 }}
       >
         <div className="flex-1 max-w-xl">
-          <h1 className="text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl">
+          <h1 className="heading-1 text-brand-dark font-khmer">
             {t("heroTitle")}
           </h1>
 
-          <p className="mt-6 text-lg text-gray-600">{t("heroDescription")}</p>
+          <p
+            className="body-lg text-gray-600 font-khmer"
+            style={{ marginTop: "var(--space-6)" }}
+          >
+            {t("heroDescription")}
+          </p>
         </div>
 
         <div className="flex-1 hidden items-center justify-end md:flex">
@@ -36,7 +41,7 @@ export default function Hero() {
       </div>
 
       {/* mobile image (stacked) */}
-      <div className="mx-auto mt-8 md:hidden" style={{ maxWidth: 720 }}>
+      <div className="mx-auto mt-8 md:hidden px-4" style={{ maxWidth: 720 }}>
         <Image
           src="/hero_door.png"
           alt="hero"

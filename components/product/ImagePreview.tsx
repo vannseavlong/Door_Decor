@@ -48,8 +48,8 @@ export default function ImagePreview({ images, alt }: Props) {
                 if (e.key === "Home") setIndex(0);
                 if (e.key === "End") setIndex(imgs.length - 1);
               }}
-              className={`w-16 h-16 rounded-md overflow-hidden border focus:outline-none focus:ring-2 focus:ring-[#f7942d] ${
-                i === index ? "ring-2 ring-[#f7942d]" : ""
+              className={`w-16 h-16 rounded-md overflow-hidden border focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all ${
+                i === index ? "ring-2 ring-brand-primary" : ""
               }`}
               aria-label={`Show image ${i + 1}`}
               aria-current={i === index ? "true" : undefined}

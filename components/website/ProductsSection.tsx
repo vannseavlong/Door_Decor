@@ -51,21 +51,26 @@ export default function ProductsSection({ products }: Props) {
     );
 
   return (
-    <section className="w-full py-16">
-      <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
+    <section className="w-full py-12 md:py-16">
+      <div className="" style={{ maxWidth: 1440 }}>
         <div className="mb-8">
-          <h2 className="text-4xl font-bold text-gray-900">Products</h2>
-          <p className="mt-2 text-gray-600">Explore our product gallery</p>
+          <h2 className="heading-2 text-brand-dark font-khmer">Products</h2>
+          <p
+            className="body-base text-gray-600 font-khmer"
+            style={{ marginTop: "var(--space-2)" }}
+          >
+            Explore our product gallery
+          </p>
         </div>
 
         <div className="space-y-10">
           {categories.map((cat) => (
             <div key={cat}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[32px] font-bold text-gray-900">{cat}</h3>
+                <h3 className="heading-3 text-brand-dark font-khmer">{cat}</h3>
                 <Link
                   href={`/products/category/${slugify(cat)}`}
-                  className="text-sm text-indigo-600 hover:underline"
+                  className="body-sm text-brand-secondary hover-brand-primary hover:underline transition-colors"
                   aria-label={`View products in ${cat}`}
                 >
                   View all

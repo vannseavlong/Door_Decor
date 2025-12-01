@@ -25,10 +25,18 @@ export default async function ProductPage({ params }: Props) {
   if (!product) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-bold">Product not found</h1>
-        <p className="mt-4 text-sm text-gray-600">No product with id {id}.</p>
+        <h1 className="heading-3 text-brand-dark">Product not found</h1>
+        <p
+          className="body-base text-gray-600"
+          style={{ marginTop: "var(--space-4)" }}
+        >
+          No product with id {id}.
+        </p>
         <div className="mt-4">
-          <Link href="/" className="text-blue-600 underline">
+          <Link
+            href="/"
+            className="text-brand-secondary hover-brand-primary underline transition-colors"
+          >
             Back to home
           </Link>
         </div>

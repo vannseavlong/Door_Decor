@@ -2,15 +2,24 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  imageUrl: string;
-  images?: string[]; // Multiple images showing different angles
-  price?: number;
-  features?: string[];
-  specifications?: {
+  imageUrl?: string;
+  images: string[]; // Multiple images showing different angles
+  categoryId: string;
+  price: string;
+  features: string[];
+  specifications: {
     [key: string]: string;
   };
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ContactMessage {
@@ -18,7 +27,7 @@ export interface ContactMessage {
   name: string;
   email: string;
   message: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface HeroContent {

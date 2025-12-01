@@ -10,6 +10,12 @@ const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [productOpen, setProductOpen] = useState(false);
   const productRef = useRef<HTMLDivElement | null>(null);
+  const categories = [
+    "Interior Doors",
+    "Exterior Doors",
+    "Hardware",
+    "Accessories",
+  ];
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -32,9 +38,9 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <header className="w-full border-b bg-white fixed top-0 left-0 z-50">
-      <div className="mx-auto" style={{ maxWidth: 1440 }}>
-        <div className="flex items-center justify-between h-24">
+    <header className="w-full border-b bg-white fixed top-0 left-0 z-50 shadow-sm">
+      <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
+        <div className="flex items-center justify-between h-20 md:h-24">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-3">
               <Image
@@ -46,13 +52,13 @@ const Navbar: React.FC = () => {
               />
             </Link>
 
-            <nav className="hidden md:flex items-center gap-4 ml-6">
-              <Link
+            <nav className="hidden md:flex items-center gap-6 ml-6">
+              {/* <Link
                 href="/about"
-                className="text-base text-[#1A1A1A] font-medium hover:text-[#f7942d]"
+                className="body-base font-medium text-brand-dark hover-brand-primary transition-colors"
               >
                 About Us
-              </Link>
+              </Link> */}
 
               <div ref={productRef} className="relative">
                 <button
@@ -60,7 +66,7 @@ const Navbar: React.FC = () => {
                   onClick={() => setProductOpen((s) => !s)}
                   aria-haspopup="menu"
                   aria-expanded={productOpen}
-                  className="text-base text-[#1A1A1A] font-medium hover:text-[#f7942d] flex items-center gap-2"
+                  className="body-base font-medium text-brand-dark hover-brand-primary flex items-center gap-2 transition-colors"
                 >
                   <span>Product</span>
                   <svg
@@ -85,34 +91,28 @@ const Navbar: React.FC = () => {
 
                 <div
                   role="menu"
-                  className={`absolute left-0 mt-2 w-48 bg-white border rounded-md shadow-lg transition-opacity ${
+                  className={`absolute left-0 mt-2 w-56 bg-white border rounded-md shadow-lg transition-opacity ${
                     productOpen
                       ? "opacity-100 pointer-events-auto"
                       : "opacity-0 pointer-events-none"
                   }`}
                 >
                   <ul className="py-2" role="none">
-                    {[
-                      { name: "All Products", href: "/product" },
-                      {
-                        name: "WPC Doors",
-                        href: "/product?category=wpc-doors",
-                      },
-                      { name: "Flooring", href: "/product?category=flooring" },
-                      {
-                        name: "Accessories",
-                        href: "/product?category=accessories",
-                      },
-                    ].map((c) => (
-                      <li key={c.href} role="none">
+                    {categories.map((cat) => (
+                      <li key={cat} role="none">
                         <Link
-                          href={c.href}
+                          href={`/products/category/${encodeURIComponent(
+                            cat
+                              .toLowerCase()
+                              .replace(/\s+/g, "-")
+                              .replace(/[^a-z0-9-]/g, "")
+                          )}`}
                           role="menuitem"
                           tabIndex={productOpen ? 0 : -1}
                           onClick={() => setProductOpen(false)}
-                          className="block px-4 py-2 text-sm text-[#1A1A1A] hover:bg-gray-50 hover:text-[#f7942d]"
+                          className="block px-4 py-2 body-sm text-brand-dark hover:bg-brand-light hover-brand-primary transition-colors"
                         >
-                          {c.name}
+                          {cat}
                         </Link>
                       </li>
                     ))}
@@ -140,7 +140,7 @@ const Navbar: React.FC = () => {
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
-                className="text-[#1A1A1A]"
+                className="text-brand-dark"
               >
                 <rect
                   x="3"
@@ -204,14 +204,14 @@ const Navbar: React.FC = () => {
         <div className="p-4">
           <ul className="flex flex-col gap-3">
             <li>
-              <Link href="/about" className="text-base">
+              <Link href="/about" className="body-base text-brand-dark">
                 About Us
               </Link>
             </li>
 
             <li>
               <details className="group">
-                <summary className="text-base flex items-center justify-between cursor-pointer">
+                <summary className="body-base text-brand-dark flex items-center justify-between cursor-pointer">
                   Product
                   <svg
                     width="16"
@@ -240,7 +240,10 @@ const Navbar: React.FC = () => {
                     },
                   ].map((c) => (
                     <li key={c.href}>
-                      <Link href={c.href} className="block py-2">
+                      <Link
+                        href={c.href}
+                        className="block py-2 body-sm text-brand-dark hover-brand-primary"
+                      >
                         {c.name}
                       </Link>
                     </li>

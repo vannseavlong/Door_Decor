@@ -1,16 +1,144 @@
 "use client";
-import React from "react";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Home, LogOut, Package, FolderTree, Mail, Layout } from "lucide-react";
+import { useAuth } from "@/lib/contexts/AuthContext";
+import { toast } from "sonner";
+import {
+  HeroSection,
+  ProductsTab,
+  CategoriesTab,
+  MessagesTab,
+  FooterTab,
+} from "@/components/admin-portal";
+
+type TabType = "hero" | "products" | "categories" | "messages" | "footer";
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
+  const { logout } = useAuth();
+  const [activeTab, setActiveTab] = useState<TabType>("hero");
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("Logged out successfully");
+      router.push("/");
+    } catch {
+      toast.error("Failed to logout");
+    }
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-      <p className="mt-4 text-sm text-gray-600">Welcome to the admin area.</p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3">
+                <span className="text-white font-bold">WD</span>
+              </div>
+              <h1 className="text-xl font-bold text-gray-900">
+                Admin Dashboard
+              </h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => router.push("/")}
+                className="flex items-center text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                <Home className="w-5 h-5 mr-2" />
+                View Site
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center text-red-600 hover:text-red-700 transition-colors"
+              >
+                <LogOut className="w-5 h-5 mr-2" />
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Tabs */}
+        <div className="bg-white rounded-lg shadow mb-6">
+          <div className="border-b border-gray-200">
+            <nav className="flex -mb-px">
+              <button
+                onClick={() => setActiveTab("hero")}
+                className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === "hero"
+                    ? "border-orange-500 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <Home className="w-5 h-5 inline-block mr-2" />
+                Hero Section
+              </button>
+              <button
+                onClick={() => setActiveTab("products")}
+                className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === "products"
+                    ? "border-orange-500 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <Package className="w-5 h-5 inline-block mr-2" />
+                Products
+              </button>
+              <button
+                onClick={() => setActiveTab("categories")}
+                className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === "categories"
+                    ? "border-orange-500 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <FolderTree className="w-5 h-5 inline-block mr-2" />
+                Categories
+              </button>
+              <button
+                onClick={() => setActiveTab("messages")}
+                className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === "messages"
+                    ? "border-orange-500 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <Mail className="w-5 h-5 inline-block mr-2" />
+                Messages
+              </button>
+              <button
+                onClick={() => setActiveTab("footer")}
+                className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === "footer"
+                    ? "border-orange-500 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <Layout className="w-5 h-5 inline-block mr-2" />
+                Footer
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === "hero" && <HeroSection />}
+        {activeTab === "products" && <ProductsTab />}
+        {activeTab === "categories" && <CategoriesTab />}
+        {activeTab === "messages" && <MessagesTab />}
+        {activeTab === "footer" && <FooterTab />}
+      </div>
     </div>
   );
 }
-// }import React, { useState } from 'react';
-// import { LogOut, Plus, Edit2, Trash2, Home, Package, Mail } from 'lucide-react';
+
 // import { useAuth } from '../../contexts/AuthContext';
 // import { Product } from '../../types';
 // import { mockProducts } from '../../data/mockData';

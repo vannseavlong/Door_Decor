@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "@/components/website/Navbar";
+import Footer from "@/components/website/Footer";
 
 export default function PublicLayout({
   children,
@@ -9,9 +10,10 @@ export default function PublicLayout({
   return (
     <>
       <Navbar />
-      <main className="mx-auto px-4 pt-16" style={{ maxWidth: 1440 }}>
+      <main className="mx-auto px-8 pt-16" style={{ maxWidth: 1440 }}>
         {children}
       </main>
+      <Footer />
     </>
   );
 }

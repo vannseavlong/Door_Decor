@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_Khmer } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/website/Navbar";
-import Footer from "@/components/website/Footer";
+import { AuthProvider } from "@/lib/contexts/AuthContext";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,6 +12,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const notoSansKhmer = Noto_Sans_Khmer({
+  variable: "--font-noto-sans-khmer",
+  subsets: ["khmer"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -28,13 +34,12 @@ export default function RootLayout({
     <html lang="en">
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSansKhmer.variable} antialiased`}
       >
-        <Navbar />
-        <main className="mx-auto px-8 pt-16" style={{ maxWidth: 1440 }}>
+        <AuthProvider>
           {children}
-        </main>
-        <Footer />
+          <Toaster position="top-right" />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -52,26 +52,32 @@ export default async function CategoryPage({ params }: Props) {
   }
 
   return (
-    <section className="w-full py-16">
+    <section className="w-full py-12 md:py-16">
       <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <h1 className="heading-2 text-brand-dark font-khmer">
               {categoryLabel}
             </h1>
-            <p className="mt-1 text-gray-600">
+            <p
+              className="body-base text-gray-600 font-khmer"
+              style={{ marginTop: "var(--space-1)" }}
+            >
               Products in the {categoryLabel} category
             </p>
           </div>
           <div>
-            <Link href="/" className="text-sm text-indigo-600 hover:underline">
+            <Link
+              href="/"
+              className="body-sm text-brand-secondary hover-brand-primary hover:underline transition-colors"
+            >
               Back to home
             </Link>
           </div>
         </div>
 
         {products.length === 0 ? (
-          <div className="text-gray-600">
+          <div className="body-base text-gray-600">
             No products found in this category.
           </div>
         ) : (

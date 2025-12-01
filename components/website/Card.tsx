@@ -35,7 +35,9 @@ export default function Card({
       </div>
 
       <div className="p-4">
-        <h3 className="text-sm font-medium text-gray-900">{title}</h3>
+        <h3 className="body-base font-medium text-brand-dark font-khmer">
+          {title}
+        </h3>
       </div>
     </article>
   );

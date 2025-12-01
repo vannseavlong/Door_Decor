@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Lock, Mail } from "lucide-react";
-import { useAuth } from "../../../lib/contexts/AuthContext";
+import { useAuth } from "@/lib/contexts/AuthContext";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -18,35 +18,41 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // For demo purposes, accept any email/password
-      // In production, this will authenticate with Firebase
+      console.log("Login - Starting login process for:", email);
+
       await login(email, password);
+      console.log("Login - Firebase auth successful");
 
       // After sign-in, validate that the email is allowed to access admin.
-      // This check is done server-side via an API route that reads secure env vars.
+      console.log("Login - Checking admin whitelist via API");
       const res = await fetch("/api/admin/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
+      console.log("Login - API response status:", res.status);
+
       if (!res.ok) {
-        // If the check fails, sign out immediately and show error.
         await logout();
         toast.error("Your account is not allowed to access the admin panel.");
         return;
       }
 
       const data = await res.json();
+      console.log("Login - API response data:", data);
+
       if (!data.allowed) {
         await logout();
         toast.error("Your account is not allowed to access the admin panel.");
         return;
       }
 
+      console.log("Login - Success! Redirecting to dashboard");
       toast.success("Login successful!");
-      router.push("/(admin-portal)/dashboard");
+      router.push("/dashboard");
     } catch (error) {
+      console.error("Login - Error:", error);
       toast.error("Login failed. Please check your credentials.");
     } finally {
       setLoading(false);

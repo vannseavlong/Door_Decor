@@ -24,7 +24,9 @@ export default function RelatedProducts({ products, currentId }: Props) {
 
   return (
     <section className="mt-12">
-      <h3 className="text-xl font-semibold mb-4">Related Products</h3>
+      <h3 className="heading-4 text-brand-dark mb-4 font-khmer">
+        Related Products
+      </h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {items.map((p) => (
           <div key={p.id}>
