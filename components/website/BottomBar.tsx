@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaHome, FaBoxOpen, FaInfoCircle, FaPhone } from "react-icons/fa";
+import { FaHome, FaInfoCircle, FaPhone, FaDoorOpen } from "react-icons/fa";
 
 // You can adjust the icons or use your own SVGs if preferred
 const menu = [
@@ -11,7 +11,7 @@ const menu = [
   {
     label: "Products",
     href: "/product", // Or open a modal for categories
-    icon: <FaBoxOpen size={24} />,
+    icon: <FaDoorOpen size={24} />,
   },
   {
     label: "About",
