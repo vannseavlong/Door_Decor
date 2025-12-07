@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "@/components/website/Navbar";
 import Footer from "@/components/website/Footer";
+import BottomBar from "@/components/website/BottomBar";
 
 export default function PublicLayout({
   children,
@@ -14,6 +15,7 @@ export default function PublicLayout({
         {children}
       </main>
       <Footer />
+      <BottomBar />
     </>
   );
 }
