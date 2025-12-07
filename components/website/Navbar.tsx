@@ -48,17 +48,18 @@ const Navbar: React.FC = () => {
                 alt="logo"
                 width={96}
                 height={96}
-                className="object-contain"
+                className="object-contain max-h-20 md:max-h-24 w-auto"
+                style={{ maxHeight: "5rem" }} // fallback for max-h-20
               />
             </Link>
 
             <nav className="hidden md:flex items-center gap-6 ml-6">
-              {/* <Link
+              <Link
                 href="/about"
                 className="body-base font-medium text-brand-dark hover-brand-primary transition-colors"
               >
                 About Us
-              </Link> */}
+              </Link>
 
               <div ref={productRef} className="relative">
                 <button

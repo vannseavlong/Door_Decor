@@ -24,7 +24,7 @@ export default function ContactSection() {
           <div className="mt-6 flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <div className="body-sm font-khmer">
-                <span className="font-medium">លេខទូរសព្ទ៖ </span>
+                <span className="font-medium">Phone Number: </span>
                 <a
                   href="tel:070943838"
                   className="text-brand-dark hover-brand-primary"
