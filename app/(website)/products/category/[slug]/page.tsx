@@ -81,7 +81,7 @@ export default async function CategoryPage({ params }: Props) {
             No products found in this category.
           </div>
         ) : (
-          <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
             {products.map((p, idx) => (
               <Card
                 key={p.id ?? String(idx)}
