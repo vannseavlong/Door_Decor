@@ -80,7 +80,7 @@ export default async function ProductPage({ params }: Props) {
   );
 
   return (
-    <div className="w-full pt-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+    <div className="w-full pt-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 gap-y-10 items-start">
         <div>
           {/* single-image product display (new) */}
