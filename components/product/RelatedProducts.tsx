@@ -27,7 +27,7 @@ export default function RelatedProducts({ products, currentId }: Props) {
       <h3 className="heading-4 text-brand-dark mb-4 font-khmer">
         Related Products
       </h3>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {items.map((p) => (
           <div key={p.id}>
             <Link href={`/product/${p.id}`} className="block">

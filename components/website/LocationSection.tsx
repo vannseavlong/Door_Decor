@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 
 export default function LocationSection() {
   // Google Maps embed for Wonder Door Industrial, Phnom Penh.
@@ -14,11 +15,23 @@ export default function LocationSection() {
   return (
     <section className="w-full py-12 md:py-16">
       <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
-        <h2 className="heading-3 text-center text-brand-dark mb-6 font-khmer">
+        <motion.h2
+          className="heading-3 text-center text-brand-dark mb-6 font-khmer"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           Our Location
-        </h2>
+        </motion.h2>
 
-        <div className="rounded-lg overflow-hidden shadow-sm">
+        <motion.div
+          className="rounded-lg overflow-hidden shadow-sm"
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
           <div
             style={{
               position: "relative",
@@ -35,7 +48,7 @@ export default function LocationSection() {
               referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

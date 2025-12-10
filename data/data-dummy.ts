@@ -12,6 +12,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-1",
     name: "Modern Interior WPC Door",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 299,
     category: "Interior Doors",
     imageUrl: "/imageStock/img1.jpg",
@@ -30,6 +47,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-2",
     name: "Classic Exterior Door",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 399,
     category: "Exterior Doors",
     imageUrl: "/imageStock/img3.jpg",
@@ -48,6 +82,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-3",
     name: "Premium Door Handle Set",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 79,
     category: "Hardware",
     imageUrl: "/imageStock/img5.jpg",
@@ -65,6 +116,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-4",
     name: "Decorative Moulding",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 49,
     category: "Accessories",
     imageUrl: "/imageStock/img6.jpg",
@@ -82,6 +150,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-5",
     name: "Economy Interior Door",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 199,
     category: "Interior Doors",
     imageUrl: "/imageStock/img7.jpg",
@@ -99,6 +184,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-6",
     name: "Deluxe Exterior Entrance",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 459,
     category: "Exterior Doors",
     imageUrl: "/imageStock/img8.jpg",
@@ -117,6 +219,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-7",
     name: "Rounded Knob Set",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 39,
     category: "Hardware",
     imageUrl: "/imageStock/img10.jpg",
@@ -134,6 +253,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-8",
     name: "Decorative Corner Trim",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 29,
     category: "Accessories",
     imageUrl: "/imageStock/img2.jpg",
@@ -151,6 +287,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-9",
     name: "Premium Interior Panel",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 259,
     category: "Interior Doors",
     imageUrl: "/imageStock/img4.jpg",
@@ -169,6 +322,23 @@ export const dummyProducts: Product[] = [
   {
     id: "p-10",
     name: "Exterior Threshold Strip",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
     price: 19,
     category: "Exterior Doors",
     imageUrl: "/imageStock/img6.jpg",

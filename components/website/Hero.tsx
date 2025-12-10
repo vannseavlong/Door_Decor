@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React from "react";
+import { motion } from "framer-motion";
 import { useTranslate } from "@/lib/utils/useTranslate";
 
 export default function Hero() {
@@ -13,20 +14,38 @@ export default function Hero() {
         className="mx-auto flex w-full items-center gap-8 md:gap-12 px-4"
         style={{ maxWidth: 1440 }}
       >
-        <div className="flex-1 max-w-xl">
-          <h1 className="heading-1 text-brand-dark font-khmer">
+        <motion.div
+          className="flex-1 max-w-xl"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <motion.h1
+            className="heading-1 text-brand-dark font-khmer"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             {t("heroTitle")}
-          </h1>
+          </motion.h1>
 
-          <p
+          <motion.p
             className="body-lg text-gray-600 font-khmer"
             style={{ marginTop: "var(--space-6)" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
           >
             {t("heroDescription")}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="flex-1 hidden items-center justify-end md:flex">
+        <motion.div
+          className="flex-1 hidden items-center justify-end md:flex"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
           <div className="w-[460px] h-auto">
             <Image
               src="/hero_door.png"
@@ -37,11 +56,17 @@ export default function Hero() {
               priority
             />
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* mobile image (stacked) */}
-      <div className="mx-auto mt-8 md:hidden px-4" style={{ maxWidth: 720 }}>
+      <motion.div
+        className="mx-auto mt-8 md:hidden px-4"
+        style={{ maxWidth: 720 }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+      >
         <Image
           src="/hero_door.png"
           alt="hero"
@@ -49,7 +74,7 @@ export default function Hero() {
           height={480}
           className="w-full object-contain"
         />
-      </div>
+      </motion.div>
     </section>
   );
 }

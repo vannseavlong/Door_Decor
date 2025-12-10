@@ -11,6 +11,14 @@ export type Product = {
    * - Alternate shape: { Material: 'WPC', Dimensions: '...' }
    */
   specifications?: { label: string; value: string }[] | Record<string, string>;
+  /**
+   * Product code for display in ProductCode component
+   */
+  code?: string;
+  /**
+   * Rows for ProductCode component (fully independent from specifications)
+   */
+  productCodeRows?: { label: string; value: string }[];
   /** Multiple images (optional). If present, prefer this over `imageUrl`. */
   images?: string[];
   /** Optional feature list used by the richer product detail UI */
