@@ -13,7 +13,7 @@ interface ProductCodeProps {
 const ProductCode: React.FC<ProductCodeProps> = ({ code, rows }) => {
   return (
     <div className="w-full">
-      <h2 className="text-4xl font-extrabold text-blue-900 mb-6">{code}</h2>
+      <h2 className="text-4xl font-extrabold text-[#f7941d] mb-6">{code}</h2>
       <div className="border-t border-gray-200">
         {rows.map((row, idx) => (
           <div
