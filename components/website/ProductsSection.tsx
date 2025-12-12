@@ -114,7 +114,7 @@ export default function ProductsSection({ products }: Props) {
               </div>
 
               <motion.div
-                className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
+                className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
