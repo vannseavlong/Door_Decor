@@ -5,6 +5,7 @@ import { Lock, Mail } from "lucide-react";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -60,21 +61,29 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-linear-to-br from-orange-50 to-white flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-500 rounded-lg mb-4">
-            <span className="text-white">WD</span>
-          </div>
-          <h1 className="text-gray-900 mb-2">Admin Login</h1>
-          <p className="text-gray-600">Sign in to manage your content</p>
-        </div>
 
         {/* Login Form */}
         <div className="bg-white rounded-lg shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
+              <div className="text-center mb-8">
+                <div className="flex justify-center mb-4">
+                  <Image
+                    src="/Door-Logo.jpg"
+                    alt="Wonder Door Logo"
+                    width={120}
+                    height={40}
+                    className="h-40 w-auto object-contain"
+                  />
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                  Admin Login
+                </h1>
+                <p className="text-gray-600">Sign in to manage your content</p>
+              </div>
               <label className="block text-gray-700 mb-2">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -84,7 +93,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@example.com"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 />
               </div>
             </div>
@@ -99,7 +108,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 />
               </div>
             </div>
@@ -107,7 +116,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-brand-primary text-white py-3 rounded-lg hover:bg-brand-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -116,7 +125,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <button
               onClick={() => router.push("/")}
-              className="text-orange-500 hover:text-orange-600"
+              className="text-brand-primary hover:text-brand-primary/90"
             >
               Back to Home
             </button>
@@ -124,13 +133,6 @@ export default function LoginPage() {
         </div>
 
         {/* Demo Credentials Info */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-blue-800 text-sm">
-            <strong>Demo Mode:</strong> Enter any email and password to access
-            the admin panel. In production, this will authenticate with
-            Firebase.
-          </p>
-        </div>
       </div>
     </div>
   );

@@ -51,7 +51,7 @@ export default function ProductInfoActions({ product }: Props) {
       <div className="mt-6">
         <button
           onClick={handleContact}
-          className="inline-flex items-center justify-center bg-brand-primary text-white font-semibold px-4 py-2 rounded-md shadow transition-colors hover:bg-brand-secondary"
+          className="inline-flex items-center justify-center bg-brand-primary text-white font-semibold px-4 py-2 rounded-md shadow transition-colors"
         >
           Request a Quote
         </button>

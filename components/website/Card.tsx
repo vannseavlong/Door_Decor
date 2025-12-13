@@ -25,11 +25,9 @@ export default function Card({
 
   const content = (
     <motion.article
-      className="bg-white rounded-lg shadow-sm overflow-hidden"
+      className="bg-white rounded-lg border border-gray-200 overflow-hidden"
       whileHover={{
         y: -8,
-        boxShadow:
-          "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         transition: { duration: 0.3, ease: "easeOut" },
       }}
       transition={{ duration: 0.3 }}
