@@ -10,7 +10,10 @@ import {
   Send,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getFooter, saveFooter } from "@/app/(admin-portal)/dashboard/footer-actions";
+import {
+  getFooter,
+  saveFooter,
+} from "@/app/(admin-portal)/dashboard/footer-actions";
 
 interface FooterContent {
   companyDescription: { en: string; km: string };

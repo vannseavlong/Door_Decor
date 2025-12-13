@@ -1,5 +1,9 @@
 "use server";
-import { getFooterServer, updateFooterServer, FooterRecord } from "@/lib/firebase/footer";
+import {
+  getFooterServer,
+  updateFooterServer,
+  FooterRecord,
+} from "@/lib/firebase/footer";
 
 export async function getFooter(): Promise<FooterRecord | null> {
   return getFooterServer();

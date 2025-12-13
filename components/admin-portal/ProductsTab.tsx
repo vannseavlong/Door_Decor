@@ -22,6 +22,13 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Image from "next/image";
 import {
   getProducts,
@@ -37,6 +44,7 @@ export default function ProductsTab() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   useEffect(() => {
     (async () => {
@@ -112,22 +120,53 @@ export default function ProductsTab() {
     return typeof category.name === "string" ? category.name : category.name.en;
   };
 
+  const filteredProducts =
+    selectedCategory === "all"
+      ? products
+      : products.filter((p) => p.categoryId === selectedCategory);
+
   if (loading) return <div>Loading...</div>;
 
   return (
     <>
       <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-900">Manage Products</h2>
-          <Button variant="default" onClick={handleAddProduct}>
-            <Plus className="w-5 h-5 mr-2" /> Add Product
-          </Button>
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold text-gray-900">Manage Products</h2>
+            <div className="flex items-center gap-3">
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {typeof category.name === "string"
+                        ? category.name
+                        : category.name.en}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button variant="default" onClick={handleAddProduct}>
+                <Plus className="w-5 h-5 mr-2" /> Add Product
+              </Button>
+            </div>
+          </div>
         </div>
 
-        {products.length === 0 ? (
+        {filteredProducts.length === 0 ? (
           <div className="p-12 text-center">
             <Package className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-500 mb-4">No products yet</p>
+            <p className="text-gray-500 mb-4">
+              {products.length === 0
+                ? "No products yet"
+                : "No products in this category"}
+            </p>
             <Button
               variant="link"
               onClick={handleAddProduct}
@@ -150,7 +189,7 @@ export default function ProductsTab() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>
                     {product.imageUrl ? (
