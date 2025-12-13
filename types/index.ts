@@ -1,14 +1,14 @@
 export interface Product {
   id: string;
-  name: string;
-  description: string;
+  name: string | { en: string; km: string };
+  description: string | { en: string; km: string };
   imageUrl?: string;
   images: string[]; // Multiple images showing different angles
   categoryId: string;
   price: string;
   features: string[];
-  specifications: {
-    [key: string]: string;
+  productCode: {
+    [key: string]: { en: string; km: string };
   };
   createdAt: string;
   updatedAt: string;
@@ -16,8 +16,8 @@ export interface Product {
 
 export interface Category {
   id: string;
-  name: string;
-  description?: string;
+  name: string | { en: string; km: string };
+  description?: string | { en: string; km: string };
   createdAt: string;
   updatedAt: string;
 }

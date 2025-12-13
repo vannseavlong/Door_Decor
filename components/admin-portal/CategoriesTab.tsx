@@ -50,7 +50,7 @@ export default function CategoriesTab() {
           <h2 className="text-xl font-bold text-gray-900">Manage Categories</h2>
           <button
             onClick={handleAddCategory}
-            className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 flex items-center transition-colors"
+            className="bg-brand-primary text-white px-4 py-2 rounded-lg hover:bg-brand-primary/90 flex items-center transition-colors"
           >
             <Plus className="w-5 h-5 mr-2" />
             Add Category
@@ -63,7 +63,7 @@ export default function CategoriesTab() {
             <p className="text-gray-500 mb-4">No categories yet</p>
             <button
               onClick={handleAddCategory}
-              className="text-orange-500 hover:text-orange-600 font-medium"
+              className="text-brand-primary hover:text-brand-primary/90 font-medium"
             >
               Add your first category
             </button>
@@ -74,10 +74,16 @@ export default function CategoriesTab() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Name
+                    Name (English)
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Description
+                    Name (Khmer)
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Description (English)
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Description (Khmer)
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Actions
@@ -88,10 +94,24 @@ export default function CategoriesTab() {
                 {categories.map((category) => (
                   <tr key={category.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                      {category.name}
+                      {typeof category.name === "string"
+                        ? category.name
+                        : category.name?.en}
+                    </td>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900 font-khmer">
+                      {typeof category.name === "string"
+                        ? "-"
+                        : category.name?.km}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
-                      {category.description || "-"}
+                      {typeof category.description === "string"
+                        ? category.description
+                        : category.description?.en || "-"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 font-khmer">
+                      {typeof category.description === "string"
+                        ? "-"
+                        : category.description?.km || "-"}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex space-x-2">

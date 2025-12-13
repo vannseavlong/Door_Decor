@@ -22,6 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 export default function ProductsTab() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -61,7 +62,8 @@ export default function ProductsTab() {
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((c) => c.id === categoryId);
-    return category?.name || categoryId;
+    if (!category) return categoryId;
+    return typeof category.name === "string" ? category.name : category.name.en;
   };
 
   return (
@@ -78,7 +80,11 @@ export default function ProductsTab() {
           <div className="p-12 text-center">
             <Package className="w-16 h-16 mx-auto text-gray-300 mb-4" />
             <p className="text-gray-500 mb-4">No products yet</p>
-            <Button variant="link" onClick={handleAddProduct}>
+            <Button
+              variant="link"
+              onClick={handleAddProduct}
+              className="text-brand-primary hover:text-brand-primary/90 font-medium"
+            >
               Add your first product
             </Button>
           </div>
@@ -90,7 +96,7 @@ export default function ProductsTab() {
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Category</TableHead>
-                <TableHead>Specification</TableHead>
+                <TableHead>Product Code</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -100,9 +106,15 @@ export default function ProductsTab() {
                 <TableRow key={product.id}>
                   <TableCell>
                     {product.images && product.images.length > 0 ? (
-                      <img
+                      <Image
                         src={product.images[0]}
-                        alt={product.name}
+                        alt={
+                          typeof product.name === "string"
+                            ? product.name
+                            : product.name.en
+                        }
+                        width={48}
+                        height={48}
                         className="w-12 h-12 rounded object-cover"
                       />
                     ) : (
@@ -111,9 +123,16 @@ export default function ProductsTab() {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="font-medium">{product.name}</TableCell>
+                  <TableCell className="font-medium">
+                    {typeof product.name === "string"
+                      ? product.name
+                      : product.name.en}
+                  </TableCell>
                   <TableCell>
-                    {product.description?.substring(0, 50)}...
+                    {typeof product.description === "string"
+                      ? product.description.substring(0, 50)
+                      : product.description?.en?.substring(0, 50)}
+                    ...
                   </TableCell>
                   <TableCell>
                     {product.categoryId
@@ -121,16 +140,22 @@ export default function ProductsTab() {
                       : "Uncategorized"}
                   </TableCell>
                   <TableCell>
-                    {product.specifications &&
-                    typeof product.specifications === "object" ? (
+                    {product.productCode &&
+                    typeof product.productCode === "object" &&
+                    Object.keys(product.productCode).length > 0 ? (
                       <ul className="text-xs text-gray-600 space-y-1">
-                        {Object.entries(product.specifications).map(
-                          ([key, value]) => (
-                            <li key={key}>
-                              <span className="font-semibold">{key}:</span>{" "}
-                              {value}
-                            </li>
-                          )
+                        {Object.entries(product.productCode).map(
+                          ([key, value]) => {
+                            const [labelEn] = key.split("/");
+                            return (
+                              <li key={key}>
+                                <span className="font-semibold">
+                                  {labelEn}:
+                                </span>{" "}
+                                {value.en}
+                              </li>
+                            );
+                          }
                         )}
                       </ul>
                     ) : (
