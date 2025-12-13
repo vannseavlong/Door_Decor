@@ -2,8 +2,7 @@ export interface Product {
   id: string;
   name: string | { en: string; km: string };
   description: string | { en: string; km: string };
-  imageUrl?: string;
-  images: string[]; // Multiple images showing different angles
+  imageUrl: string; // Single product image
   categoryId: string;
   price: string;
   features: string[];

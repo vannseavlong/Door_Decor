@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Product, Category } from "@/types";
-import { MultipleImageUpload } from "./MultipleImageUpload";
+import { ImageUpload } from "./ImageUpload";
 import { Plus, Trash2 } from "lucide-react";
 import {
   Dialog,
@@ -42,7 +42,7 @@ export default function ProductModal({
     description: { en: string; km: string };
     price: string;
     categoryId: string;
-    images: string[];
+    imageUrl: string;
     productCode: { [key: string]: { en: string; km: string } };
     features: string[];
   }>({
@@ -56,7 +56,7 @@ export default function ProductModal({
         : product?.description || { en: "", km: "" },
     price: product?.price || "",
     categoryId: product?.categoryId || "",
-    images: product?.images || [],
+    imageUrl: product?.imageUrl || "",
     productCode: product?.productCode || {},
     features: product?.features || [],
   });
@@ -72,7 +72,7 @@ export default function ProductModal({
       description: formData.description,
       price: formData.price,
       categoryId: formData.categoryId,
-      images: formData.images,
+      imageUrl: formData.imageUrl,
       productCode: formData.productCode,
       features: formData.features,
       createdAt: product?.createdAt || new Date().toISOString(),
@@ -216,13 +216,14 @@ export default function ProductModal({
             />
           </div>
           <div className="space-y-2">
-            <Label className="block">Product Images *</Label>
-            <MultipleImageUpload
-              label="Product Images"
-              currentImages={formData.images}
-              onImagesChange={(images: string[]) =>
-                setFormData({ ...formData, images })
+            <Label className="block">Product Image *</Label>
+            <ImageUpload
+              label="Product Image"
+              currentImage={formData.imageUrl}
+              onImageChange={(imageUrl: string) =>
+                setFormData({ ...formData, imageUrl })
               }
+              required
             />
           </div>
           <div className="space-y-3">

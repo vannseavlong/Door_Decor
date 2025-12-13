@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Facebook,
   Instagram,
@@ -10,6 +10,7 @@ import {
   Send,
 } from "lucide-react";
 import { toast } from "sonner";
+import { getFooter, saveFooter } from "@/app/(admin-portal)/dashboard/footer-actions";
 
 interface FooterContent {
   companyDescription: { en: string; km: string };
@@ -30,13 +31,10 @@ interface FooterContent {
 
 export default function FooterTab() {
   const [footerContent, setFooterContent] = useState<FooterContent>({
-    companyDescription: {
-      en: "Wonder Door Industrial takes you to the doors of the future for modern and contemporary living, combined with international standard quality.",
-      km: "វ៉ាន់ឌ័រ ដ័រ ឧស្សាហកម្ម នាំអ្នកឆ្ពោះទៅកាន់ទ្វាររបស់អនាគត សម្រាប់ជីវិតសម័យទំនើប និងទំនើបបំផុត រួមផ្សំជាមួយគុណភាពស្តង់ដារអន្តរជាតិ។",
-    },
-    email: "info@wonderdoor.com",
-    phone: "+855 12 345 678",
-    address: "Phnom Penh, Cambodia",
+    companyDescription: { en: "", km: "" },
+    email: "",
+    phone: "",
+    address: "",
     socialMedia: {
       facebook: "",
       instagram: "",
@@ -48,8 +46,24 @@ export default function FooterTab() {
       telegramChannel: "",
     },
   });
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const data = await getFooter();
+        if (data) {
+          setFooterContent(data);
+        }
+      } catch {
+        toast.error("Failed to load footer content");
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
@@ -73,10 +87,12 @@ export default function FooterTab() {
       },
     };
 
+    await saveFooter(updatedContent);
     setFooterContent(updatedContent);
-    // TODO: Save to Firestore
     toast.success("Footer content updated successfully!");
   };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="bg-white rounded-lg shadow p-6">

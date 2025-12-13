@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Package, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { Product, Category } from "@/types";
 import { toast } from "sonner";
@@ -23,12 +23,41 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import {
+  getProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+} from "@/app/(admin-portal)/dashboard/product-actions";
+import { getCategories } from "@/app/(admin-portal)/dashboard/category-actions";
 
 export default function ProductsTab() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories] = useState<Category[]>([]); // TODO: Load from Firestore
+  const [categories, setCategories] = useState<Category[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const [productsData, categoriesData] = await Promise.all([
+          getProducts(),
+          getCategories(),
+        ]);
+        setProducts(
+          productsData.map((p) => ({ ...p, id: p.id || "" })) as Product[]
+        );
+        setCategories(
+          categoriesData.map((c) => ({ ...c, id: c.id || "" })) as Category[]
+        );
+      } catch {
+        toast.error("Failed to load data");
+      }
+      setLoading(false);
+    })();
+  }, []);
 
   const handleAddProduct = () => {
     setEditingProduct(null);
@@ -40,20 +69,37 @@ export default function ProductsTab() {
     setShowModal(true);
   };
 
-  const handleDeleteProduct = (productId: string) => {
+  const handleDeleteProduct = async (productId: string) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      // TODO: Delete from Firestore
+      await deleteProduct(productId);
       setProducts(products.filter((p) => p.id !== productId));
       toast.success("Product deleted successfully");
     }
   };
 
-  const handleSaveProduct = (product: Product) => {
+  const handleSaveProduct = async (product: Product) => {
+    // Ensure name/description are always { en, km }
+    const safeProduct = {
+      ...product,
+      name:
+        typeof product.name === "string"
+          ? { en: product.name, km: "" }
+          : product.name,
+      description:
+        typeof product.description === "string"
+          ? { en: product.description, km: "" }
+          : product.description,
+    };
+
     if (editingProduct) {
-      setProducts(products.map((p) => (p.id === product.id ? product : p)));
+      await updateProduct(safeProduct.id, safeProduct);
+      setProducts(
+        products.map((p) => (p.id === safeProduct.id ? safeProduct : p))
+      );
       toast.success("Product updated successfully");
     } else {
-      setProducts([...products, product]);
+      const { id } = await addProduct(safeProduct);
+      setProducts([...products, { ...safeProduct, id }]);
       toast.success("Product added successfully");
     }
     setShowModal(false);
@@ -65,6 +111,8 @@ export default function ProductsTab() {
     if (!category) return categoryId;
     return typeof category.name === "string" ? category.name : category.name.en;
   };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <>
@@ -105,9 +153,9 @@ export default function ProductsTab() {
               {products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>
-                    {product.images && product.images.length > 0 ? (
+                    {product.imageUrl ? (
                       <Image
-                        src={product.images[0]}
+                        src={product.imageUrl}
                         alt={
                           typeof product.name === "string"
                             ? product.name

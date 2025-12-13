@@ -1,15 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, FolderTree } from "lucide-react";
 import { Category } from "@/types";
 import { toast } from "sonner";
 import CategoryModal from "./CategoryModal";
+import {
+  getCategories,
+  addCategory,
+  updateCategory,
+  deleteCategory,
+} from "@/app/(admin-portal)/dashboard/category-actions";
 
 export default function CategoriesTab() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const data = await getCategories();
+        setCategories(
+          data.map((d) => ({ ...d, id: d.id || "" })) as Category[]
+        );
+      } catch {
+        toast.error("Failed to load categories");
+      }
+      setLoading(false);
+    })();
+  }, []);
 
   const handleAddCategory = () => {
     setEditingCategory(null);
@@ -21,27 +43,44 @@ export default function CategoriesTab() {
     setShowModal(true);
   };
 
-  const handleDeleteCategory = (categoryId: string) => {
-    // TODO: Check if category has products in Firestore
+  const handleDeleteCategory = async (categoryId: string) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
+      await deleteCategory(categoryId);
       setCategories(categories.filter((c) => c.id !== categoryId));
       toast.success("Category deleted successfully");
     }
   };
 
-  const handleSaveCategory = (category: Category) => {
+  const handleSaveCategory = async (category: Category) => {
+    // Ensure name/description are always { en, km }
+    const safeCategory = {
+      ...category,
+      name:
+        typeof category.name === "string"
+          ? { en: category.name, km: "" }
+          : category.name,
+      description:
+        typeof category.description === "string"
+          ? { en: category.description, km: "" }
+          : category.description ?? { en: "", km: "" },
+    };
+
     if (editingCategory) {
+      await updateCategory(safeCategory.id, safeCategory);
       setCategories(
-        categories.map((c) => (c.id === category.id ? category : c))
+        categories.map((c) => (c.id === safeCategory.id ? safeCategory : c))
       );
       toast.success("Category updated successfully");
     } else {
-      setCategories([...categories, category]);
+      const { id } = await addCategory(safeCategory);
+      setCategories([...categories, { ...safeCategory, id }]);
       toast.success("Category added successfully");
     }
     setShowModal(false);
     setEditingCategory(null);
   };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <>
