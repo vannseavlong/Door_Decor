@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 const LANGS = ["en", "kh"];
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const parts = pathname.split("/");
   const first = parts[1];
