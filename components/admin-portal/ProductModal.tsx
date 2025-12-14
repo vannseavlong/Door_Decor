@@ -63,9 +63,13 @@ export default function ProductModal({
 
   const [specKey, setSpecKey] = useState({ en: "", km: "" });
   const [specValue, setSpecValue] = useState({ en: "", km: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
+
+    setIsSubmitting(true);
     const productData: Product = {
       id: product?.id || Date.now().toString(),
       name: formData.name,
@@ -79,6 +83,7 @@ export default function ProductModal({
       updatedAt: new Date().toISOString(),
     };
     onSave(productData);
+    onClose(); // Close dialog immediately to prevent duplicate submissions
   };
 
   const handleAddSpec = () => {
@@ -343,6 +348,7 @@ export default function ProductModal({
                 variant="outline"
                 onClick={onClose}
                 style={{ borderColor: "#f97316", color: "#f97316" }}
+                disabled={isSubmitting}
               >
                 Cancel
               </Button>
@@ -350,8 +356,15 @@ export default function ProductModal({
             <Button
               type="submit"
               style={{ backgroundColor: "#f97316", color: "white" }}
+              disabled={isSubmitting}
             >
-              {product ? "Update" : "Add"}
+              {isSubmitting
+                ? product
+                  ? "Updating..."
+                  : "Adding..."
+                : product
+                ? "Update"
+                : "Add"}
             </Button>
           </DialogFooter>
         </form>
