@@ -2,24 +2,37 @@
 
 import React from "react";
 import { toast } from "sonner";
-import { Product } from "@/types/product";
+import { ProductRecord } from "@/lib/firebase/product";
 import ProductCode from "@/components/product/ProductCode";
+import ProductStats from "@/components/product/ProductStats";
 
-type Props = { product: Product };
+type Props = { product: ProductRecord };
 
 export default function ProductInfoActions({ product }: Props) {
-  const specsArray: { label: string; value: string }[] = Array.isArray(
-    product.specifications
-  )
-    ? product.specifications
-    : product.specifications
-    ? Object.entries(product.specifications).map(([label, value]) => ({
+  // Convert productCode object to array for ProductCode component
+  const productCodeRows = product.productCode
+    ? Object.entries(product.productCode).map(([label, value]) => ({
         label,
-        value,
+        value: typeof value === "string" ? value : value.en, // Use English by default
       }))
     : [];
 
   const handleContact = () => {
+    try {
+      const id = product.id || "unknown";
+      const key = `product-stats-${id}`;
+      const raw = localStorage.getItem(key);
+      const s = raw ? JSON.parse(raw) : { views: 0, clicks: 0 };
+      s.clicks = (s.clicks || 0) + 1;
+      localStorage.setItem(key, JSON.stringify(s));
+      // dispatch storage event to update other listeners (same-tab)
+      try {
+        window.dispatchEvent(
+          new StorageEvent("storage", { key, newValue: JSON.stringify(s) })
+        );
+      } catch {}
+    } catch {}
+
     toast.success("Redirecting to contact form...");
     setTimeout(() => {
       const el = document.getElementById("contact");
@@ -29,32 +42,21 @@ export default function ProductInfoActions({ product }: Props) {
 
   return (
     <div>
-      {/* <h1 className="text-4xl font-extrabold leading-tight">{product.name}</h1>
-
-      <div className="mt-4 text-gray-700">
-        {product.description ? (
-          <p className="text-sm text-gray-700">{product.description}</p>
-        ) : (
-          <p className="text-sm text-gray-600">No description available.</p>
-        )}
-      </div>
-
-      <hr className="my-6 border-t border-gray-200" /> */}
-
       {/* Product code and details table */}
       <ProductCode
-        code={product.code || product.name}
-        rows={product.productCodeRows || specsArray}
+        code={product.id || product.name.en}
+        rows={productCodeRows}
       />
 
       {/* Request button (compact) */}
-      <div className="mt-6">
+      <div className="mt-6 flex items-center gap-4 flex-nowrap">
         <button
           onClick={handleContact}
-          className="inline-flex items-center justify-center bg-brand-primary text-white font-semibold px-4 py-2 rounded-md shadow transition-colors"
+          className="inline-flex items-center justify-center bg-brand-primary text-white font-semibold px-6 py-3 rounded-lg shadow-lg text-lg transition-colors"
         >
           Request a Quote
         </button>
+        <ProductStats productId={product.id ?? "unknown"} />
       </div>
     </div>
   );

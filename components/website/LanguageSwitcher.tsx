@@ -3,7 +3,6 @@
 import React, { useRef } from "react";
 import Image from "next/image";
 import { useTranslate } from "@/lib/utils/useTranslate";
-import { useRouter } from "next/navigation";
 
 const OPTIONS: { code: string; label: string; flagSrc: string }[] = [
   { code: "en", label: "EN", flagSrc: "/flags/EnFlag.webp" },
@@ -13,7 +12,6 @@ const OPTIONS: { code: string; label: string; flagSrc: string }[] = [
 export default function LanguageSwitcher() {
   const { lang, setLang } = useTranslate();
   const detailsRef = useRef<HTMLDetailsElement | null>(null);
-  const router = useRouter();
 
   return (
     <div className="relative inline-block text-left w-full md:w-auto">
@@ -64,17 +62,8 @@ export default function LanguageSwitcher() {
                   /* ignore */
                 }
 
-                // compute new path: replace existing lang prefix if present
-                const curPath =
-                  typeof window !== "undefined"
-                    ? window.location.pathname
-                    : "/";
-                const segs = curPath.split("/").filter(Boolean);
-                if (segs[0] === "en" || segs[0] === "kh") segs.shift();
-                const rest = segs.join("/");
-                const target = `/${opt.code}${rest ? "/" + rest : ""}`;
-
-                router.push(target);
+                // No navigation needed - language state is global
+                // The page will re-render with new language automatically
               }}
               className="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-center gap-3"
             >

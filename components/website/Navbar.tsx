@@ -5,17 +5,34 @@ import Link from "next/link";
 import Image from "next/image";
 import LanguageSwitcher from "@/components/website/LanguageSwitcher";
 import ContactButton from "@/components/website/ContactButton";
+import { useTranslate } from "@/lib/utils/useTranslate";
+import { CategoryRecord } from "@/lib/firebase/category";
 
-const Navbar: React.FC = () => {
+type NavbarProps = {
+  categories?: CategoryRecord[];
+};
+
+const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
+  const { t, lang } = useTranslate();
+  const currentLocale = lang || "en";
   const [open, setOpen] = useState(false);
   const [productOpen, setProductOpen] = useState(false);
   const productRef = useRef<HTMLDivElement | null>(null);
-  const categories = [
-    "Interior Doors",
-    "Exterior Doors",
-    "Hardware",
-    "Accessories",
-  ];
+
+  // Helper to get category name based on locale
+  const getCategoryName = (name: string | { en: string; km: string }) => {
+    if (typeof name === "string") return name;
+    return currentLocale === "kh" ? name.km : name.en;
+  };
+
+  // Helper to slugify category name
+  const slugify = (text: string) =>
+    encodeURIComponent(
+      text
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "")
+    );
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -56,9 +73,9 @@ const Navbar: React.FC = () => {
             <nav className="hidden md:flex items-center gap-6 ml-6">
               <Link
                 href="/about"
-                className="body-base font-medium text-brand-dark hover-brand-primary transition-colors"
+                className="body-base font-medium text-brand-dark hover-brand-primary transition-colors font-khmer"
               >
-                About Us
+                {t("navAboutUs")}
               </Link>
 
               <div ref={productRef} className="relative">
@@ -67,9 +84,9 @@ const Navbar: React.FC = () => {
                   onClick={() => setProductOpen((s) => !s)}
                   aria-haspopup="menu"
                   aria-expanded={productOpen}
-                  className="body-base font-medium text-brand-dark hover-brand-primary flex items-center gap-2 transition-colors"
+                  className="body-base font-medium text-brand-dark hover-brand-primary flex items-center gap-2 transition-colors font-khmer"
                 >
-                  <span>Product</span>
+                  <span>{t("navProduct")}</span>
                   <svg
                     width="12"
                     height="12"
@@ -99,24 +116,27 @@ const Navbar: React.FC = () => {
                   }`}
                 >
                   <ul className="py-2" role="none">
-                    {categories.map((cat) => (
-                      <li key={cat} role="none">
-                        <Link
-                          href={`/products/category/${encodeURIComponent(
-                            cat
-                              .toLowerCase()
-                              .replace(/\s+/g, "-")
-                              .replace(/[^a-z0-9-]/g, "")
-                          )}`}
-                          role="menuitem"
-                          tabIndex={productOpen ? 0 : -1}
-                          onClick={() => setProductOpen(false)}
-                          className="block px-4 py-2 body-sm text-brand-dark hover:bg-brand-light hover-brand-primary transition-colors"
-                        >
-                          {cat}
-                        </Link>
+                    {categories.length > 0 ? (
+                      categories.map((cat) => (
+                        <li key={cat.id} role="none">
+                          <Link
+                            href={`/products/category/${slugify(
+                              getCategoryName(cat.name)
+                            )}`}
+                            role="menuitem"
+                            tabIndex={productOpen ? 0 : -1}
+                            onClick={() => setProductOpen(false)}
+                            className="block px-4 py-2 body-sm text-brand-dark hover:bg-brand-light hover-brand-primary transition-colors font-khmer"
+                          >
+                            {getCategoryName(cat.name)}
+                          </Link>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="px-4 py-2 body-sm text-gray-500 font-khmer">
+                        {t("noProducts")}
                       </li>
-                    ))}
+                    )}
                   </ul>
                 </div>
               </div>
@@ -205,15 +225,18 @@ const Navbar: React.FC = () => {
         <div className="p-4">
           <ul className="flex flex-col gap-3">
             <li>
-              <Link href="/about" className="body-base text-brand-dark">
-                About Us
+              <Link
+                href="/about"
+                className="body-base text-brand-dark font-khmer"
+              >
+                {t("navAboutUs")}
               </Link>
             </li>
 
             <li>
               <details className="group">
-                <summary className="body-base text-brand-dark flex items-center justify-between cursor-pointer">
-                  Product
+                <summary className="body-base text-brand-dark flex items-center justify-between cursor-pointer font-khmer">
+                  {t("navProduct")}
                   <svg
                     width="16"
                     height="16"
@@ -231,21 +254,23 @@ const Navbar: React.FC = () => {
                   </svg>
                 </summary>
                 <ul className="mt-2 pl-4 flex flex-col gap-2">
-                  {[
-                    { name: "All Products", href: "/product" },
-                    { name: "WPC Doors", href: "/product?category=wpc-doors" },
-                    { name: "Flooring", href: "/product?category=flooring" },
-                    {
-                      name: "Accessories",
-                      href: "/product?category=accessories",
-                    },
-                  ].map((c) => (
-                    <li key={c.href}>
+                  <li>
+                    <Link
+                      href="/product"
+                      className="block py-2 body-sm text-brand-dark hover-brand-primary font-khmer"
+                    >
+                      {t("navAllProducts")}
+                    </Link>
+                  </li>
+                  {categories.map((cat) => (
+                    <li key={cat.id}>
                       <Link
-                        href={c.href}
-                        className="block py-2 body-sm text-brand-dark hover-brand-primary"
+                        href={`/products/category/${slugify(
+                          getCategoryName(cat.name)
+                        )}`}
+                        className="block py-2 body-sm text-brand-dark hover-brand-primary font-khmer"
                       >
-                        {c.name}
+                        {getCategoryName(cat.name)}
                       </Link>
                     </li>
                   ))}

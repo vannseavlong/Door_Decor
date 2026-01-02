@@ -18,17 +18,26 @@ export default function ContactButton({
   text,
   hoverText,
 }: ContactButtonProps) {
-  const { t } = useTranslate();
+  const { t, lang } = useTranslate();
+  const currentLocale = lang || "en";
 
-  const displayText = text || t("Contact Us") || "Contact Us";
-  const displayHoverText = hoverText || t("Contact Us") || "Get in touch";
+  const displayText = text || t("contactUs");
+  const displayHoverText = hoverText || t("getInTouch");
 
   const inner = (
     <span className="relative inline-flex items-center justify-center overflow-hidden">
-      <span className="inline-block transition-transform duration-300 translate-y-0 group-hover:-translate-y-[110%]">
+      <span
+        className={`inline-block transition-transform duration-300 translate-y-0 group-hover:-translate-y-[110%] ${
+          currentLocale === "kh" ? "font-khmer" : ""
+        }`}
+      >
         {displayText}
       </span>
-      <span className="absolute left-0 top-[110%] inline-block transition-transform duration-300 group-hover:translate-y-[-110%]">
+      <span
+        className={`absolute left-0 top-[110%] inline-block transition-transform duration-300 group-hover:translate-y-[-110%] ${
+          currentLocale === "kh" ? "font-khmer" : ""
+        }`}
+      >
         {displayHoverText}
       </span>
     </span>

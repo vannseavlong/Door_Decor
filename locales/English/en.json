@@ -3,5 +3,42 @@
   "productTitle": "Our Products",
   "heroDescription": "Wonder Door Industrial takes you to the doors of the future for modern and contemporary living, combined with international standard quality.",
   "adminLogin": "Admin Login",
-  "adminDashboard": "Dashboard"
+  "adminDashboard": "Dashboard",
+
+  "viewAllProducts": "View All Products",
+  "learnMore": "Learn More",
+  "exploreCategory": "Explore",
+
+  "blogSectionTitle": "Our Recent Installations",
+  "blogSectionSubtitle": "See how our doors transform spaces",
+  "readMore": "Read More",
+  "viewAllInstallations": "View All Installations",
+
+  "contactUs": "Contact Us",
+  "getInTouch": "Contact Us",
+  "sendMessage": "Send Message",
+  "yourName": "Your Name",
+  "yourEmail": "Your Email",
+  "yourMessage": "Your Message",
+
+  "aboutUs": "About Us",
+  "ourStory": "Our Story",
+  "ourMission": "Our Mission",
+  "ourValues": "Our Values",
+
+  "categories": "Categories",
+  "allCategories": "All Categories",
+  "noProducts": "No products available",
+  "noInstallations": "No installations yet",
+
+  "location": "Location",
+  "date": "Date",
+  "category": "Category",
+
+  "navAboutUs": "About Us",
+  "navProduct": "Product",
+  "navAllProducts": "All Products",
+  "navHome": "Home",
+  "quickLinks": "Quick Links",
+  "contactUs": "Contact Us"
 }

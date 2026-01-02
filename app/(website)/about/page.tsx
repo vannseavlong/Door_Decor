@@ -1,13 +1,11 @@
-export default function AboutPage() {
-  return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="heading-2 text-brand-dark font-khmer">About Us</h1>
-      <p
-        className="body-base text-gray-600 font-khmer"
-        style={{ marginTop: "var(--space-4)" }}
-      >
-        Information about the company will be here.
-      </p>
-    </div>
-  );
+import { getAboutDataServer } from "@/lib/firebase/about";
+import AboutClient from "./AboutClient";
+
+// Enable ISR - revalidate every 60 seconds
+export const revalidate = 60;
+
+export default async function AboutPage() {
+  const aboutData = await getAboutDataServer();
+
+  return <AboutClient aboutData={aboutData} />;
 }

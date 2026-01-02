@@ -348,6 +348,35 @@ export const dummyProducts: Product[] = [
     features: ["Weatherproof", "Easy install"],
     createdAt: Date.now(),
   },
+  {
+    id: "p-10",
+    name: "Exterior Threshold Strip",
+    code: "MIWD-001",
+    productCodeRows: [
+      { label: "Code", value: "00001" },
+      { label: "Door Type", value: "Villa" },
+      { label: "Material", value: "Cast Iron + Steel + 5-Layer Paint Coating" },
+      {
+        label: "Special Features",
+        value: "Color does not fade",
+      },
+      { label: "Area of Use", value: "House Entrance Door (Main/Front Door)" },
+      { label: "Style", value: "Classic" },
+      {
+        label: "Quality Warranty",
+        value: "5 Years on the Paint, 1 Year on the Lock and Door Hinges",
+      },
+      { label: "Item Type", value: "Pre Order" },
+    ],
+    price: 19,
+    category: "Accessories",
+    imageUrl: "/imageStock/img6.jpg",
+    images: ["/imageStock/img6.jpg"],
+    description:
+      "Durable threshold strip for better sealing under exterior doors.",
+    features: ["Weatherproof", "Easy install"],
+    createdAt: Date.now(),
+  },
 ];
 
 export default dummyProducts;

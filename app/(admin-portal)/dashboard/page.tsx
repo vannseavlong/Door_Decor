@@ -2,19 +2,35 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Home, LogOut, Package, FolderTree, Layout } from "lucide-react";
+import {
+  Home,
+  LogOut,
+  Package,
+  FolderTree,
+  Layout,
+  FileText,
+  Image as ImageIcon,
+} from "lucide-react";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { toast } from "sonner";
 import {
   HeroSection,
+  AboutTab,
   ProductsTab,
   CategoriesTab,
-  MessagesTab,
+  InstallationTab,
   FooterTab,
+  AdminBottomBar,
 } from "@/components/admin-portal";
 import Image from "next/image";
 
-type TabType = "hero" | "products" | "categories" | "messages" | "footer";
+type TabType =
+  | "hero"
+  | "about"
+  | "products"
+  | "categories"
+  | "installations"
+  | "footer";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -70,10 +86,10 @@ export default function AdminDashboardPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Tabs */}
-        <div className="bg-white rounded-lg shadow mb-6">
+        {/* Tabs - Desktop */}
+        <div className="bg-white rounded-lg shadow mb-6 hidden md:block">
           <div className="border-b border-gray-200">
-            <nav className="flex -mb-px">
+            <nav className="flex -mb-px overflow-x-auto">
               <button
                 onClick={() => setActiveTab("hero")}
                 className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors ${
@@ -84,6 +100,17 @@ export default function AdminDashboardPage() {
               >
                 <Home className="w-5 h-5 inline-block mr-2" />
                 Hero Section
+              </button>
+              <button
+                onClick={() => setActiveTab("about")}
+                className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
+                  activeTab === "about"
+                    ? "border-brand-primary text-brand-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <FileText className="w-5 h-5 inline-block mr-2" />
+                About
               </button>
               <button
                 onClick={() => setActiveTab("products")}
@@ -106,6 +133,17 @@ export default function AdminDashboardPage() {
               >
                 <FolderTree className="w-5 h-5 inline-block mr-2" />
                 Categories
+              </button>
+              <button
+                onClick={() => setActiveTab("installations")}
+                className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
+                  activeTab === "installations"
+                    ? "border-brand-primary text-brand-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <ImageIcon className="w-5 h-5 inline-block mr-2" />
+                Installations
               </button>
               {/* <button
                 onClick={() => setActiveTab("messages")}
@@ -134,11 +172,17 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === "hero" && <HeroSection />}
-        {activeTab === "products" && <ProductsTab />}
-        {activeTab === "categories" && <CategoriesTab />}
-        {activeTab === "messages" && <MessagesTab />}
-        {activeTab === "footer" && <FooterTab />}
+        <div className="pb-20 md:pb-0">
+          {activeTab === "hero" && <HeroSection />}
+          {activeTab === "about" && <AboutTab />}
+          {activeTab === "products" && <ProductsTab />}
+          {activeTab === "categories" && <CategoriesTab />}
+          {activeTab === "installations" && <InstallationTab />}
+          {activeTab === "footer" && <FooterTab />}
+        </div>
+
+        {/* Bottom Navigation - Mobile/Tablet */}
+        <AdminBottomBar activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>
   );

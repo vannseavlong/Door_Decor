@@ -2,9 +2,11 @@ import Link from "next/link";
 import ProductImage from "@/components/product/ProductImage";
 import ProductInfoActions from "@/components/product/ProductInfoActions";
 import RelatedProducts from "@/components/product/RelatedProducts";
-import { Product } from "@/types/product";
-import dummyProducts from "@/data/data-dummy";
 import { ProductRouteParams } from "@/types/product";
+import { getProductsServer, ProductRecord } from "@/lib/firebase/product";
+
+// Enable ISR - revalidate every 120 seconds (2 minutes)
+export const revalidate = 120;
 
 type Props = { params: ProductRouteParams | Promise<ProductRouteParams> };
 
@@ -15,12 +17,11 @@ export default async function ProductPage({ params }: Props) {
     ? resolvedParams.id.join("-")
     : resolvedParams?.id;
 
-  let product: Product | null = null;
-  let products: Product[] = [];
+  // Fetch products from Firebase
+  const productsData = await getProductsServer();
 
-  // Use centralized dummyProducts for demo data
-  products = dummyProducts;
-  product = products.find((p) => p.id === id) ?? products[0] ?? null;
+  const product =
+    productsData.find((p) => p.id === id) ?? productsData[0] ?? null;
 
   if (!product) {
     return (
@@ -35,7 +36,7 @@ export default async function ProductPage({ params }: Props) {
         <div className="mt-4">
           <Link
             href="/"
-            className="text-brand-secondary hover-brand-primary underline transition-colors"
+            className="text-brand-primary hover:text-brand-secondary underline transition-colors"
           >
             Back to home
           </Link>
@@ -44,49 +45,25 @@ export default async function ProductPage({ params }: Props) {
     );
   }
 
-  // Prepare images array - support single imageUrl or product.images
-  const prodWithImages = product as Product & { images?: string[] };
-  // If product provides `images`, use them. Otherwise, if we only have a
-  // single `imageUrl`, create a small thumbnail set using other images from
-  // the public `/imageStock` folder so the gallery shows multiple angles.
-  const FALLBACK_STOCK = [
-    "/imageStock/img1.jpg",
-    "/imageStock/img2.jpg",
-    "/imageStock/img3.jpg",
-    "/imageStock/img4.jpg",
-    "/imageStock/img5.jpg",
-  ];
-
-  let images: string[] = [];
-  if (Array.isArray(prodWithImages.images) && prodWithImages.images.length) {
-    images = prodWithImages.images;
-  } else if (prodWithImages.imageUrl) {
-    // include the main image first, then fill with up to 3 fallback images
-    const others = FALLBACK_STOCK.filter(
-      (p) => p !== prodWithImages.imageUrl
-    ).slice(0, 3);
-    images = [prodWithImages.imageUrl, ...others];
-  } else {
-    images = [];
-  }
-
   // Related products: same category, exclude current
-  const related = products.filter(
+  const related = productsData.filter(
     (p) =>
-      p.category &&
-      product.category &&
-      p.category === product.category &&
+      p.categoryId &&
+      product.categoryId &&
+      p.categoryId === product.categoryId &&
       p.id !== product.id
   );
 
   return (
     <div className="w-full pt-20">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 gap-y-10 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 gap-y-10 items-start">
         <div>
-          {/* single-image product display (new) */}
+          {/* single-image product display */}
           <ProductImage
-            src={product.imageUrl ?? images[0]}
-            alt={product.name}
+            src={product.imageUrl}
+            alt={
+              typeof product.name === "string" ? product.name : product.name.en
+            }
           />
         </div>
 

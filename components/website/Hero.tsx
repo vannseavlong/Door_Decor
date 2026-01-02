@@ -5,8 +5,32 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useTranslate } from "@/lib/utils/useTranslate";
 
-export default function Hero() {
-  const { t } = useTranslate();
+type HeroProps = {
+  title?: { en: string; km: string };
+  description?: { en: string; km: string };
+  imageUrl?: string;
+};
+
+export default function Hero({ title, description, imageUrl }: HeroProps) {
+  const { t, lang } = useTranslate();
+
+  // Use Firebase data if available, otherwise fall back to translations
+  // Handle undefined lang by defaulting to "en"
+  const currentLocale = lang || "en";
+
+  const displayTitle = title
+    ? currentLocale === "kh"
+      ? title.km
+      : title.en
+    : t("heroTitle");
+
+  const displayDescription = description
+    ? currentLocale === "kh"
+      ? description.km
+      : description.en
+    : t("heroDescription");
+
+  const displayImage = imageUrl || "/hero_door.png";
 
   return (
     <section className="w-full py-12 md:py-20">
@@ -21,22 +45,26 @@ export default function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <motion.h1
-            className="heading-1 text-brand-dark font-khmer"
+            className={`heading-1 text-brand-dark ${
+              currentLocale === "kh" ? "font-khmer" : ""
+            }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {t("heroTitle")}
+            {displayTitle}
           </motion.h1>
 
           <motion.p
-            className="body-lg text-gray-600 font-khmer"
+            className={`body-lg text-gray-600 ${
+              currentLocale === "kh" ? "font-khmer" : ""
+            }`}
             style={{ marginTop: "var(--space-6)" }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            {t("heroDescription")}
+            {displayDescription}
           </motion.p>
         </motion.div>
 
@@ -48,7 +76,7 @@ export default function Hero() {
         >
           <div className="w-[460px] h-auto">
             <Image
-              src="/hero_door.png"
+              src={displayImage}
               alt="hero"
               width={920}
               height={600}
@@ -68,7 +96,7 @@ export default function Hero() {
         transition={{ duration: 0.8, delay: 0.3 }}
       >
         <Image
-          src="/hero_door.png"
+          src={displayImage}
           alt="hero"
           width={720}
           height={480}

@@ -1,9 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, FolderTree } from "lucide-react";
+import React, { useState } from "react";
+import { Plus, Edit2, Trash2, FolderTree, MoreVertical } from "lucide-react";
 import { Category } from "@/types";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import CategoryModal from "./CategoryModal";
 import {
   getCategories,
@@ -11,27 +17,24 @@ import {
   updateCategory,
   deleteCategory,
 } from "@/app/(admin-portal)/dashboard/category-actions";
+import {
+  useCategoriesQuery,
+  useInvalidateCategories,
+} from "@/lib/react-query/useFirebaseQuery";
 
 export default function CategoriesTab() {
-  const [categories, setCategories] = useState<Category[]>([]);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const data = await getCategories();
-        setCategories(
-          data.map((d) => ({ ...d, id: d.id || "" })) as Category[]
-        );
-      } catch {
-        toast.error("Failed to load categories");
-      }
-      setLoading(false);
-    })();
-  }, []);
+  // Use React Query for caching
+  const { data: categories = [], isLoading: loading } = useCategoriesQuery(
+    async () => {
+      const data = await getCategories();
+      return data.map((d) => ({ ...d, id: d.id || "" })) as Category[];
+    }
+  );
+
+  const invalidateCategories = useInvalidateCategories();
 
   const handleAddCategory = () => {
     setEditingCategory(null);
@@ -45,9 +48,13 @@ export default function CategoriesTab() {
 
   const handleDeleteCategory = async (categoryId: string) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
-      await deleteCategory(categoryId);
-      setCategories(categories.filter((c) => c.id !== categoryId));
-      toast.success("Category deleted successfully");
+      try {
+        await deleteCategory(categoryId);
+        invalidateCategories(); // Refresh cache
+        toast.success("Category deleted successfully");
+      } catch {
+        toast.error("Failed to delete category");
+      }
     }
   };
 
@@ -65,19 +72,20 @@ export default function CategoriesTab() {
           : category.description ?? { en: "", km: "" },
     };
 
-    if (editingCategory) {
-      await updateCategory(safeCategory.id, safeCategory);
-      setCategories(
-        categories.map((c) => (c.id === safeCategory.id ? safeCategory : c))
-      );
-      toast.success("Category updated successfully");
-    } else {
-      const { id } = await addCategory(safeCategory);
-      setCategories([...categories, { ...safeCategory, id }]);
-      toast.success("Category added successfully");
+    try {
+      if (editingCategory) {
+        await updateCategory(safeCategory.id, safeCategory);
+        toast.success("Category updated successfully");
+      } else {
+        await addCategory(safeCategory);
+        toast.success("Category added successfully");
+      }
+      invalidateCategories(); // Refresh cache
+      setShowModal(false);
+      setEditingCategory(null);
+    } catch {
+      toast.error("Failed to save category");
     }
-    setShowModal(false);
-    setEditingCategory(null);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -153,19 +161,28 @@ export default function CategoriesTab() {
                         : category.description?.km || "-"}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEditCategory(category)}
-                          className="text-blue-600 hover:text-blue-700"
-                        >
-                          <Edit2 className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteCategory(category.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
+                      <div className="flex items-center">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="p-1 rounded hover:bg-gray-100">
+                              <MoreVertical className="w-5 h-5 text-gray-600" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuItem
+                              onSelect={() => handleEditCategory(category)}
+                            >
+                              <Edit2 className="w-4 h-4 mr-2" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onSelect={() => handleDeleteCategory(category.id)}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2 text-red-600" />{" "}
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </td>
                   </tr>
