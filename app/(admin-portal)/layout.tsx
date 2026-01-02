@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { isAllowedAdmin } from "@/lib/firebase/whitelist";
+import QueryProvider from "@/lib/react-query/QueryProvider";
 
 export default function AdminLayout({
   children,
@@ -69,5 +70,5 @@ export default function AdminLayout({
 
   if (!authorized) return null;
 
-  return <>{children}</>;
+  return <QueryProvider>{children}</QueryProvider>;
 }

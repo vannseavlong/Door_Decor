@@ -3,8 +3,19 @@
 import { motion } from "framer-motion";
 import { FaFacebookF, FaTelegramPlane, FaPhoneAlt } from "react-icons/fa";
 import { SiTiktok } from "react-icons/si";
+import { useTranslate } from "@/lib/utils/useTranslate";
 
-const contacts = [
+type ContactData = {
+  phone?: string;
+  socialMedia?: {
+    facebook?: string;
+    tiktok?: string;
+    telegram?: string;
+    telegramChannel?: string;
+  };
+};
+
+const DEFAULT_CONTACTS = [
   {
     label: "Facebook",
     icon: FaFacebookF,
@@ -23,13 +34,6 @@ const contacts = [
     href: "https://t.me/BNb11342",
     bg: "#229ED9",
   },
-  // {
-  //   label: "Telegram Account",
-  //   icon: FaTelegramPlane,
-  //   href: "https://t.me/TC1919",
-  //   username: "@TC1919",
-  //   bg: "#229ED9",
-  // },
 ];
 
 const containerVariants = {
@@ -57,7 +61,52 @@ const itemVariants = {
   },
 };
 
-export default function NewContactUs() {
+export default function NewContactUs({
+  contactData,
+}: {
+  contactData?: ContactData;
+}) {
+  const { t } = useTranslate();
+
+  // Build contacts array from Firebase data or use defaults
+  const contacts = contactData?.socialMedia
+    ? [
+        ...(contactData.socialMedia.facebook
+          ? [
+              {
+                label: "Facebook",
+                icon: FaFacebookF,
+                href: contactData.socialMedia.facebook,
+                bg: "#4267B2",
+              },
+            ]
+          : []),
+        ...(contactData.socialMedia.tiktok
+          ? [
+              {
+                label: "TikTok",
+                icon: SiTiktok,
+                href: contactData.socialMedia.tiktok,
+                bg: "#010101",
+              },
+            ]
+          : []),
+        ...(contactData.socialMedia.telegram
+          ? [
+              {
+                label: "Telegram",
+                icon: FaTelegramPlane,
+                href: contactData.socialMedia.telegram,
+                bg: "#229ED9",
+              },
+            ]
+          : []),
+      ]
+    : DEFAULT_CONTACTS;
+
+  const phoneNumber =
+    contactData?.phone || "070 94 38 38 / 060 94 3838 / 017 94 3838";
+
   return (
     <section className="w-full py-12 md:py-16 flex flex-col items-center justify-center">
       <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
@@ -127,7 +176,7 @@ export default function NewContactUs() {
           <div className="flex items-center gap-2">
             <FaPhoneAlt className="text-brand-primary" />
             <span className="body-lg font-medium font-khmer">
-              070 94 38 38 / 060 94 3838 / 017 94 3838
+              {phoneNumber}
             </span>
           </div>
         </motion.div>

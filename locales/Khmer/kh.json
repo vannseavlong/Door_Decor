@@ -3,5 +3,42 @@
   "productTitle": "ផលិតផល​របស់​យើង",
   "heroDescription": "Wonder Door Industrial នាំអ្នក​ទៅកាន់ទ្វាររបស់​អនាគត​សម្រាប់​ការរស់នៅ​ទាន់សម័យ និង​តាម​ស្តង់ដារ​អន្តរជាតិ។",
   "adminLogin": "ការចូលរបស់អ្នកគ្រប់គ្រង",
-  "adminDashboard": "ផ្ទាំងគ្រប់គ្រង"
+  "adminDashboard": "ផ្ទាំងគ្រប់គ្រង",
+
+  "viewAllProducts": "មើលផលិតផលទាំងអស់",
+  "learnMore": "ស្វែងយល់បន្ថែម",
+  "exploreCategory": "ស្វែងរក",
+
+  "blogSectionTitle": "ការដំឡើងថ្មីៗរបស់យើង",
+  "blogSectionSubtitle": "មើលពីរបៀបដែលទ្វាររបស់យើងផ្លាស់ប្តូរទំហំ",
+  "readMore": "អានបន្ថែម",
+  "viewAllInstallations": "មើលការដំឡើងទាំងអស់",
+
+  "contactUs": "ទាក់ទងមកយើង",
+  "getInTouch": "ទាក់ទងមកយើង",
+  "sendMessage": "ផ្ញើសារ",
+  "yourName": "ឈ្មោះរបស់អ្នក",
+  "yourEmail": "អ៊ីមែលរបស់អ្នក",
+  "yourMessage": "សាររបស់អ្នក",
+
+  "aboutUs": "អំពីយើង",
+  "ourStory": "រឿងរបស់យើង",
+  "ourMission": "បេសកកម្មរបស់យើង",
+  "ourValues": "តម្លៃរបស់យើង",
+
+  "categories": "ប្រភេទ",
+  "allCategories": "ប្រភេទទាំងអស់",
+  "noProducts": "មិនមានផលិតផល",
+  "noInstallations": "មិនទាន់មានការដំឡើង",
+
+  "location": "ទីតាំង",
+  "date": "កាលបរិច្ឆេទ",
+  "category": "ប្រភេទ",
+
+  "navAboutUs": "អំពីយើង",
+  "navProduct": "ផលិតផល",
+  "navAllProducts": "ផលិតផលទាំងអស់",
+  "navHome": "ទំព័រដើម",
+  "quickLinks": "តំណភ្ជាប់រហ័ស",
+  "contactUs": "ទាក់ទងមកយើង"
 }

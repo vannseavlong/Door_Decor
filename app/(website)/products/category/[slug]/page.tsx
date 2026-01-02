@@ -1,10 +1,8 @@
 import React from "react";
-import Link from "next/link";
-import Card from "@/components/website/Card";
-import dummyProducts, {
-  CATEGORIES as DUMMY_CATEGORIES,
-} from "@/data/data-dummy";
 import { RouteParams } from "@/types/product";
+import { getProductsServer } from "@/lib/firebase/product";
+import { getCategoriesServer } from "@/lib/firebase/category";
+import CategoryClient from "./CategoryClient";
 
 type Props = {
   params: RouteParams | Promise<RouteParams>;
@@ -16,6 +14,9 @@ const slugify = (s: string) =>
     .replace(/\s+/g, "-")
     .replace(/[^a-z0-9-]/g, "");
 
+// Enable ISR - revalidate every 60 seconds
+export const revalidate = 60;
+
 export default async function CategoryPage({ params }: Props) {
   // In Next.js App Router, `params` can be a Promise that must be awaited
   const resolvedParams = await params;
@@ -23,76 +24,29 @@ export default async function CategoryPage({ params }: Props) {
   // normalize slug to a single string; if it's an array, join with '-'
   const slug = Array.isArray(rawSlug) ? rawSlug.join("-") : rawSlug ?? "";
 
-  // try to resolve slug to one of known categories, otherwise create a human label
-  const matched = slug
-    ? DUMMY_CATEGORIES.find((c) => slugify(c) === slug)
-    : undefined;
-  const categoryLabel =
-    matched ??
-    (slug
-      ? slug
-          .split("-")
-          .map((w) => (w[0] ? w[0].toUpperCase() + w.slice(1) : ""))
-          .join(" ")
-      : "Category");
+  // Fetch categories and products from Firebase
+  const [categoriesData, productsData] = await Promise.all([
+    getCategoriesServer(),
+    getProductsServer(),
+  ]);
 
-  // Match products by slugified category to avoid mismatches from spacing/casing
-  // Primary: match by slugified category (same form used by links)
-  let products = slug
-    ? dummyProducts.filter((p) => slugify(p.category ?? "") === slug)
+  // Find the category by matching slugified name (EN or KM)
+  const category = categoriesData.find((cat) => {
+    const slugEN = slugify(cat.name.en);
+    const slugKM = slugify(cat.name.km);
+    return slugEN === slug || slugKM === slug;
+  });
+
+  // Filter products by categoryId
+  const products = category
+    ? productsData.filter((p) => p.categoryId === category.id)
     : [];
 
-  // Secondary (for robustness): try a simple case-insensitive compare if no results
-  if (products.length === 0 && slug) {
-    products = dummyProducts.filter(
-      (p) =>
-        (p.category ?? "").toLowerCase() ===
-        decodeURIComponent(slug).toLowerCase()
-    );
-  }
-
   return (
-    <section className="w-full py-12 md:py-16">
-      <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="heading-2 text-brand-dark font-khmer">
-              {categoryLabel}
-            </h1>
-            <p
-              className="body-base text-gray-600 font-khmer"
-              style={{ marginTop: "var(--space-1)" }}
-            >
-              Products in the {categoryLabel} category
-            </p>
-          </div>
-          <div>
-            <Link
-              href="/"
-              className="body-sm text-brand-secondary hover-brand-primary hover:underline transition-colors"
-            >
-              Back to home
-            </Link>
-          </div>
-        </div>
-
-        {products.length === 0 ? (
-          <div className="body-base text-gray-600">
-            No products found in this category.
-          </div>
-        ) : (
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((p, idx) => (
-              <Card
-                key={p.id ?? String(idx)}
-                src={p.imageUrl ?? "/imageStock/img1.jpg"}
-                title={p.name}
-                id={p.id}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
+    <CategoryClient
+      category={category || null}
+      products={products}
+      slug={slug}
+    />
   );
 }

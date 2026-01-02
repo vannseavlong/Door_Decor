@@ -8,9 +8,13 @@ import { Product } from "@/types/product";
 import dummyProducts, {
   CATEGORIES as DUMMY_CATEGORIES,
 } from "@/data/data-dummy";
+import { useTranslate } from "@/lib/utils/useTranslate";
+import { CategoryRecord } from "@/lib/firebase/category";
+import { ProductRecord } from "@/lib/firebase/product";
 
 type Props = {
-  products?: Product[];
+  products?: ProductRecord[];
+  categories?: CategoryRecord[];
 };
 
 const IMGS = [
@@ -47,24 +51,59 @@ const itemVariants = {
   },
 };
 
-export default function ProductsSection({ products }: Props) {
+export default function ProductsSection({ products, categories }: Props) {
+  const { t, lang } = useTranslate();
+  const currentLocale = lang || "en";
+
   // use passed products when available; otherwise fall back to local dummy data
-  const items: Product[] =
+  const items: (ProductRecord | Product)[] =
     products && products.length ? products : dummyProducts;
 
-  // group products by category
-  const grouped = items.reduce((acc: Record<string, Product[]>, p) => {
-    const cat = p.category ?? "Uncategorized";
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(p);
-    return acc;
-  }, {});
+  // Helper to get category name based on locale
+  const getCategoryName = (cat: CategoryRecord): string => {
+    return currentLocale === "kh" ? cat.name.km : cat.name.en;
+  };
 
-  // order categories: prefer known categories from data-dummy, then the rest
-  const categories = [
-    ...DUMMY_CATEGORIES.filter((c) => grouped[c]),
-    ...Object.keys(grouped).filter((k) => !DUMMY_CATEGORIES.includes(k)),
-  ];
+  // Helper to get product name based on locale
+  const getProductName = (product: ProductRecord): string => {
+    if (typeof product.name === "string") return product.name;
+    return currentLocale === "kh" ? product.name.km : product.name.en;
+  };
+
+  // Helper to get category ID by name (for products with string category)
+  const getCategoryId = (categoryName: string): string => {
+    if (!categories || !categories.length) return categoryName;
+    const found = categories.find((c) => {
+      return c.name.en === categoryName || c.name.km === categoryName;
+    });
+    return found?.id ?? categoryName;
+  };
+
+  // group products by category ID
+  const grouped = items.reduce(
+    (acc: Record<string, (ProductRecord | Product)[]>, p) => {
+      const catId =
+        (p as ProductRecord).categoryId ??
+        getCategoryId((p as Product).category ?? "Uncategorized");
+      if (!acc[catId]) acc[catId] = [];
+      acc[catId].push(p);
+      return acc;
+    },
+    {}
+  );
+
+  // Filter categories to only those that have products
+  const categoriesWithProducts =
+    categories && categories.length
+      ? categories.filter((c) => c.id && grouped[c.id])
+      : Object.keys(grouped).map(
+          (id) =>
+            ({
+              id,
+              name: { en: id, km: id },
+              description: { en: "", km: "" },
+            } as CategoryRecord)
+        );
 
   const slugify = (s: string) =>
     encodeURIComponent(
@@ -84,57 +123,72 @@ export default function ProductsSection({ products }: Props) {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="heading-2 text-brand-dark font-khmer">Products</h2>
+          <h2 className="heading-2 text-brand-dark font-khmer">
+            {t("productTitle")}
+          </h2>
           <p
             className="body-base text-gray-600 font-khmer"
             style={{ marginTop: "var(--space-2)" }}
           >
-            Explore our product gallery
+            {t("exploreCategory")}
           </p>
         </motion.div>
 
         <div className="space-y-10">
-          {categories.map((cat, catIndex) => (
-            <motion.div
-              key={cat}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: catIndex * 0.1 }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="heading-3 text-brand-dark font-khmer">{cat}</h3>
-                <Link
-                  href={`/products/category/${slugify(cat)}`}
-                  className="body-sm text-brand-secondary hover-brand-primary hover:underline transition-colors"
-                  aria-label={`View products in ${cat}`}
-                >
-                  View all
-                </Link>
-              </div>
+          {categoriesWithProducts.map((cat, catIndex) => {
+            const categoryName = getCategoryName(cat);
+            const categorySlug = slugify(categoryName);
 
+            return (
               <motion.div
-                className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
+                key={cat.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: catIndex * 0.1 }}
               >
-                {grouped[cat].map((p, idx) => (
-                  <motion.div
-                    key={p.id ?? `${cat}-${idx}`}
-                    variants={itemVariants}
+                <div className="flex items-center justify-between mb-4">
+                  <h3
+                    className={`heading-3 text-brand-dark ${
+                      currentLocale === "kh" ? "font-khmer" : ""
+                    }`}
                   >
-                    <Card
-                      src={p.imageUrl ?? IMGS[idx % IMGS.length]}
-                      title={p.name}
-                      id={p.id}
-                    />
-                  </motion.div>
-                ))}
+                    {categoryName}
+                  </h3>
+                  <Link
+                    href={`/products/category/${categorySlug}`}
+                    className={`body-sm text-brand-primary hover:text-brand-primary/90 hover:underline transition-colors ${
+                      currentLocale === "kh" ? "font-khmer" : ""
+                    }`}
+                    aria-label={`View products in ${categoryName}`}
+                  >
+                    {t("viewAllProducts")}
+                  </Link>
+                </div>
+
+                <motion.div
+                  className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                  variants={containerVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-50px" }}
+                >
+                  {grouped[cat.id!].map((p, idx) => (
+                    <motion.div
+                      key={p.id ?? `${cat.id}-${idx}`}
+                      variants={itemVariants}
+                    >
+                      <Card
+                        src={p.imageUrl ?? IMGS[idx % IMGS.length]}
+                        title={getProductName(p as ProductRecord)}
+                        id={p.id}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
               </motion.div>
-            </motion.div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
