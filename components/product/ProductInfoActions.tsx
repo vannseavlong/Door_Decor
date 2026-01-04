@@ -5,16 +5,28 @@ import { toast } from "sonner";
 import { ProductRecord } from "@/lib/firebase/product";
 import ProductCode from "@/components/product/ProductCode";
 import ProductStats from "@/components/product/ProductStats";
+import { useTranslate } from "@/lib/utils/useTranslate";
 
 type Props = { product: ProductRecord };
 
 export default function ProductInfoActions({ product }: Props) {
-  // Convert productCode object to array for ProductCode component
+  const { lang } = useTranslate();
+  const currentLocale = lang || "en";
+
+  // Convert productCode object to array for ProductCode component with proper locale support
   const productCodeRows = product.productCode
-    ? Object.entries(product.productCode).map(([label, value]) => ({
-        label,
-        value: typeof value === "string" ? value : value.en, // Use English by default
-      }))
+    ? Object.entries(product.productCode).map(([key, value]) => {
+        // Key format: "Label EN/Label KM"
+        const [labelEN, labelKM] = key.split("/");
+        const label = currentLocale === "kh" && labelKM ? labelKM : labelEN;
+        const displayValue =
+          currentLocale === "kh" && value.km ? value.km : value.en;
+
+        return {
+          label: label || key,
+          value: displayValue || "-",
+        };
+      })
     : [];
 
   const handleContact = () => {
@@ -40,13 +52,13 @@ export default function ProductInfoActions({ product }: Props) {
     }, 150);
   };
 
+  // Use product code if available, otherwise fallback to product name
+  const displayCode = product.code || product.id || product.name.en;
+
   return (
     <div>
       {/* Product code and details table */}
-      <ProductCode
-        code={product.id || product.name.en}
-        rows={productCodeRows}
-      />
+      <ProductCode code={displayCode} rows={productCodeRows} />
 
       {/* Request button (compact) */}
       <div className="mt-6 flex items-center gap-4 flex-nowrap">

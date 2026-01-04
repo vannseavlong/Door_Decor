@@ -38,6 +38,7 @@ export default function ProductModal({
   onClose,
 }: ProductModalProps) {
   const [formData, setFormData] = useState<{
+    code: string;
     name: { en: string; km: string };
     description: { en: string; km: string };
     price: string;
@@ -46,6 +47,7 @@ export default function ProductModal({
     productCode: { [key: string]: { en: string; km: string } };
     features: string[];
   }>({
+    code: product?.code || "",
     name:
       typeof product?.name === "string"
         ? { en: product.name, km: "" }
@@ -72,6 +74,7 @@ export default function ProductModal({
     setIsSubmitting(true);
     const productData: Product = {
       id: product?.id || Date.now().toString(),
+      code: formData.code,
       name: formData.name,
       description: formData.description,
       price: formData.price,
@@ -149,6 +152,17 @@ export default function ProductModal({
             </div>
           </div>
           <div className="space-y-2">
+            <Label className="block">Product Code</Label>
+            <Input
+              type="text"
+              value={formData.code}
+              onChange={(e) =>
+                setFormData({ ...formData, code: e.target.value })
+              }
+              placeholder="e.g., 17637318181918"
+            />
+          </div>
+          <div className="space-y-2">
             <Label className="block">Category *</Label>
             <Select
               value={formData.categoryId}
@@ -221,7 +235,7 @@ export default function ProductModal({
             />
           </div>
           <div className="space-y-2">
-            <Label className="block">Product Image *</Label>
+            {/* <Label className="block">Product Image *</Label> */}
             <ImageUpload
               label="Product Image"
               currentImage={formData.imageUrl}

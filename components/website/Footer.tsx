@@ -55,16 +55,14 @@ export default function Footer({ footerData, categories = [] }: FooterProps) {
     ? currentLocale === "kh"
       ? footerData.companyDescription.km
       : footerData.companyDescription.en
-    : "Wonder Door Industrial និងផ្តល់ផលិតផលទ្វារមានគុណភាពខ្ពស់ សម្រាប់ទីផ្សារមន្រ្តីនិង ការរស់នៅស៊ីវិល។ Leading you to the door of the future with modern, contemporary living and international quality standards.";
+    : "3B Three Brothers និងផ្តល់ផលិតផលទ្វារមានគុណភាពខ្ពស់ សម្រាប់ទីផ្សារមន្រ្តីនិង ការរស់នៅស៊ីវិល។ Leading you to the door of the future with modern, contemporary living and international quality standards.";
 
   return (
     <footer className="mt-12 bg-brand-primary text-white">
       <div className="mx-auto px-6 py-12" style={{ maxWidth: 1440 }}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="heading-4 mb-4 font-khmer">
-              Wonder Door Industrial
-            </h3>
+            <h3 className="heading-4 mb-4 font-khmer">3B Three Brothers</h3>
             <p
               className={`body-sm text-white/90 leading-relaxed ${
                 currentLocale === "kh" ? "font-khmer" : ""
@@ -167,7 +165,7 @@ export default function Footer({ footerData, categories = [] }: FooterProps) {
                     rel="noopener noreferrer"
                     className="text-white/90 hover:underline"
                   >
-                    Telegram
+                    {footerData.socialMedia.telegramChannel}
                   </a>
                 </div>
               )}
@@ -181,7 +179,63 @@ export default function Footer({ footerData, categories = [] }: FooterProps) {
                     rel="noopener noreferrer"
                     className="text-white/90 hover:underline"
                   >
-                    Telegram
+                    {footerData.socialMedia.telegram}
+                  </a>
+                </div>
+              )}
+
+              {footerData?.socialMedia?.instagram && (
+                <div>
+                  <span className="font-medium">Instagram: </span>
+                  <a
+                    href={footerData.socialMedia.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/90 hover:underline"
+                  >
+                    {footerData.socialMedia.instagram}
+                  </a>
+                </div>
+              )}
+
+              {footerData?.socialMedia?.youtube && (
+                <div>
+                  <span className="font-medium">YouTube: </span>
+                  <a
+                    href={footerData.socialMedia.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/90 hover:underline"
+                  >
+                    {footerData.socialMedia.youtube}
+                  </a>
+                </div>
+              )}
+
+              {footerData?.socialMedia?.linkedin && (
+                <div>
+                  <span className="font-medium">Linkedin: </span>
+                  <a
+                    href={footerData.socialMedia.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/90 hover:underline"
+                  >
+                    {footerData.socialMedia.linkedin}
+                  </a>
+                </div>
+              )}
+
+              {footerData?.socialMedia?.line && (
+                <div>
+                  <span className="font-medium">Line: </span>
+                  <a
+                    href={footerData.socialMedia.line}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/90 hover:underline"
+                  >
+                    {footerData.socialMedia.line}
                   </a>
                 </div>
               )}
@@ -191,8 +245,7 @@ export default function Footer({ footerData, categories = [] }: FooterProps) {
 
         <div className="mt-8 border-t border-white/10 pt-6 body-sm text-white/80 flex items-center justify-between">
           <span>
-            © {new Date().getFullYear()} Wonder Door Industrial. All rights
-            reserved.
+            © {new Date().getFullYear()} 3B Three Brothers. All rights reserved.
           </span>
         </div>
       </div>
