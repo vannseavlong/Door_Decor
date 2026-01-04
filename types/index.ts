@@ -1,5 +1,6 @@
 export interface Product {
   id: string;
+  code?: string; // Product code for display
   name: string | { en: string; km: string };
   description: string | { en: string; km: string };
   imageUrl: string; // Single product image

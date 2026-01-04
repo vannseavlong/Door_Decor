@@ -39,7 +39,7 @@ export default function CategoryClient({ category, products, slug }: Props) {
             >
               {categoryLabel}
             </h1>
-            <p
+            {/* <p
               className={`body-base text-gray-600 ${
                 currentLocale === "kh" ? "font-khmer" : ""
               }`}
@@ -48,7 +48,7 @@ export default function CategoryClient({ category, products, slug }: Props) {
               {currentLocale === "kh"
                 ? `ផលិតផលក្នុងប្រភេទ ${categoryLabel}`
                 : `Products in the ${categoryLabel} category`}
-            </p>
+            </p> */}
           </div>
           <div>
             <Link
@@ -57,7 +57,7 @@ export default function CategoryClient({ category, products, slug }: Props) {
                 currentLocale === "kh" ? "font-khmer" : ""
               }`}
             >
-              {currentLocale === "kh" ? "ត្រឡប់ទៅផ្ទះ" : "Back to home"}
+              {currentLocale === "kh" ? "ត្រឡប់ទៅទំព័រដើម" : "Back to home"}
             </Link>
           </div>
         </div>

@@ -20,11 +20,16 @@ export async function getInstallationsServer(): Promise<InstallationRecord[]> {
   try {
     const querySnapshot = await adminDb.collection(COLLECTION_NAME).get();
     return querySnapshot.docs.map(
-      (doc: QueryDocumentSnapshot<DocumentData>) => ({
-        id: doc.id,
-        ...doc.data(),
-      })
-    ) as InstallationRecord[];
+      (doc: QueryDocumentSnapshot<DocumentData>) => {
+        const data = doc.data();
+        // Remove id field if it exists in data to prevent conflicts
+        delete data.id;
+        return {
+          id: doc.id, // Use Firestore document ID
+          ...data,
+        } as InstallationRecord;
+      }
+    );
   } catch (error) {
     console.error("Error getting installations:", error);
     return [];
@@ -48,7 +53,12 @@ export async function updateInstallationServer(
   data: Partial<InstallationRecord>
 ) {
   try {
-    await adminDb.collection(COLLECTION_NAME).doc(id).update(data);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _, ...updateData } = data; // Remove id from data
+    await adminDb
+      .collection(COLLECTION_NAME)
+      .doc(id)
+      .set(updateData, { merge: true });
   } catch (error) {
     console.error("Error updating installation:", error);
     throw error;

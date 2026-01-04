@@ -173,19 +173,16 @@ export default function InstallationModal({
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Tag/Category <span className="text-red-500">*</span>
                 </label>
-                <select
+                <input
+                  type="text"
                   value={formData.tag}
                   onChange={(e) =>
                     setFormData({ ...formData, tag: e.target.value })
                   }
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all bg-white"
+                  placeholder="e.g. Residential"
                   required
-                >
-                  <option value="">Select a tag</option>
-                  <option value="Residential">Residential</option>
-                  <option value="Commercial">Commercial</option>
-                  <option value="Customer Review">Customer Review</option>
-                </select>
+                />
               </div>
 
               <div>

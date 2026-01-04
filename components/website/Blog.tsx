@@ -152,7 +152,7 @@ export default function Blog({
           {regularPosts.map((post) => (
             <div
               key={post.id}
-              className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer"
+              className="group bg-white rounded-xl overflow-hidden border border-black-300 transition-all duration-300 cursor-pointer"
             >
               <div className="relative h-80 overflow-hidden">
                 <Image
@@ -194,12 +194,12 @@ export default function Blog({
         </div>
 
         {/* View All Button */}
-        <div className="text-center mt-12">
+        {/* <div className="text-center mt-12">
           <button className="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-[#f7941d] hover:text-[#f7941d] transition-colors inline-flex items-center gap-2 font-khmer">
             {t("viewAllInstallations")}
             <ArrowRight className="w-4 h-4" />
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

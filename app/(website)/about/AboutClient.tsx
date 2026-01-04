@@ -57,7 +57,7 @@ export default function AboutClient({
 
       {/* About section */}
       <section className="w-full py-12 md:py-16">
-        <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
+        <div style={{ maxWidth: 1440 }}>
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
               <h2
@@ -73,14 +73,6 @@ export default function AboutClient({
                 }`}
               >
                 {description}
-              </p>
-              <p
-                className={`body-base text-gray-600 ${
-                  currentLocale === "kh" ? "font-khmer" : ""
-                }`}
-              >
-                We focus on materials, detail, and customer service — ensuring
-                every door is built to last and designed to make an entrance.
               </p>
             </div>
 

@@ -55,9 +55,23 @@ export default function ProductsSection({ products, categories }: Props) {
   const { t, lang } = useTranslate();
   const currentLocale = lang || "en";
 
+  console.log("🎨 ProductsSection - Received products:", products);
+  console.log("🎨 ProductsSection - Products length:", products?.length || 0);
+  console.log("🎨 ProductsSection - Received categories:", categories);
+  console.log(
+    "🎨 ProductsSection - Categories length:",
+    categories?.length || 0
+  );
+
   // use passed products when available; otherwise fall back to local dummy data
   const items: (ProductRecord | Product)[] =
     products && products.length ? products : dummyProducts;
+
+  console.log("🎨 ProductsSection - Using items count:", items.length);
+  console.log(
+    "🎨 ProductsSection - Is using dummy data?",
+    items === dummyProducts
+  );
 
   // Helper to get category name based on locale
   const getCategoryName = (cat: CategoryRecord): string => {
@@ -92,10 +106,51 @@ export default function ProductsSection({ products, categories }: Props) {
     {}
   );
 
+  console.log("📊 Grouped products by category:", grouped);
+  console.log("📊 Grouped category IDs:", Object.keys(grouped));
+  console.log(
+    "📊 Available categories:",
+    categories?.map((c) => ({
+      firestoreDocId: c.firestoreId,
+      internalId: c.id,
+      name: c.name,
+    }))
+  );
+
+  console.log("\n🚨 =============== ID MATCHING CHECK =============== 🚨");
+  console.log(
+    "Category internal IDs:",
+    categories?.map((c) => c.id)
+  );
+  console.log("Product categoryIds:", Object.keys(grouped));
+  console.log("🚨 ================================================== 🚨\n");
+
+  // Debug: Check if IDs match using the internal id field
+  if (categories && categories.length > 0) {
+    Object.keys(grouped).forEach((groupedId) => {
+      const found = categories.find((c) => c.id === groupedId);
+      console.log(
+        `📊 Product categoryId "${groupedId}" matches category:`,
+        found ? `✅ ${found.name.en}` : "❌ NO MATCH"
+      );
+    });
+  }
+
   // Filter categories to only those that have products
+  // Match using the internal id field from the category document
   const categoriesWithProducts =
     categories && categories.length
-      ? categories.filter((c) => c.id && grouped[c.id])
+      ? categories.filter((c) => {
+          if (!c.id) return false;
+          const hasProducts = grouped[c.id];
+          console.log(
+            `📊 Category internal id ${c.id} (${c.name.en}) has products:`,
+            hasProducts ? "✅ YES" : "❌ NO",
+            "Count:",
+            hasProducts?.length || 0
+          );
+          return hasProducts;
+        })
       : Object.keys(grouped).map(
           (id) =>
             ({
@@ -104,6 +159,46 @@ export default function ProductsSection({ products, categories }: Props) {
               description: { en: "", km: "" },
             } as CategoryRecord)
         );
+
+  console.log("📊 Categories with products:", categoriesWithProducts);
+  console.log(
+    "📊 Categories with products count:",
+    categoriesWithProducts.length
+  );
+
+  // Safety check: if no categories matched, display all products under their category IDs
+  const finalCategories =
+    categoriesWithProducts.length > 0
+      ? categoriesWithProducts
+      : Object.keys(grouped).map((id) => {
+          // Find the matching category using internal id field
+          const matchingCategory = categories?.find((c) => c.id === id);
+          if (matchingCategory) {
+            console.log(
+              `✅ Found matching category for internal id ${id}:`,
+              matchingCategory.name
+            );
+            return matchingCategory;
+          }
+          console.log(`❌ No matching category found for internal id: ${id}`);
+          return {
+            id,
+            name: {
+              en: `⚠️ Category ID Mismatch: ${id}`,
+              km: `⚠️ ប្រភេទមិនត្រឹមត្រូវ: ${id}`,
+            },
+            description: {
+              en: "Please update this product's category in the admin panel",
+              km: "សូមធ្វើបច្ចុប្បន្នភាពប្រភេទផលិតផលនេះនៅក្នុងបន្ទះគ្រប់គ្រង",
+            },
+          } as CategoryRecord;
+        });
+
+  console.log("📊 Final categories to display:", finalCategories.length);
+  console.log(
+    "📊 Final categories:",
+    finalCategories.map((c) => ({ id: c.id, name: c.name }))
+  );
 
   const slugify = (s: string) =>
     encodeURIComponent(
@@ -126,16 +221,16 @@ export default function ProductsSection({ products, categories }: Props) {
           <h2 className="heading-2 text-brand-dark font-khmer">
             {t("productTitle")}
           </h2>
-          <p
+          {/* <p
             className="body-base text-gray-600 font-khmer"
             style={{ marginTop: "var(--space-2)" }}
           >
             {t("exploreCategory")}
-          </p>
+          </p> */}
         </motion.div>
 
         <div className="space-y-10">
-          {categoriesWithProducts.map((cat, catIndex) => {
+          {finalCategories.map((cat, catIndex) => {
             const categoryName = getCategoryName(cat);
             const categorySlug = slugify(categoryName);
 

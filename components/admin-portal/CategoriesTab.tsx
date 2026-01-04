@@ -74,7 +74,9 @@ export default function CategoriesTab() {
 
     try {
       if (editingCategory) {
-        await updateCategory(safeCategory.id, safeCategory);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, ...categoryData } = safeCategory; // Remove id from update data
+        await updateCategory(id, categoryData);
         toast.success("Category updated successfully");
       } else {
         await addCategory(safeCategory);
@@ -83,7 +85,8 @@ export default function CategoriesTab() {
       invalidateCategories(); // Refresh cache
       setShowModal(false);
       setEditingCategory(null);
-    } catch {
+    } catch (error) {
+      console.error("Failed to save category:", error);
       toast.error("Failed to save category");
     }
   };

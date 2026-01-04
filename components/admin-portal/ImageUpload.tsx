@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import React, { useState } from "react";
+import { Upload, X, Image as ImageIcon } from "lucide-react";
 
 interface ImageUploadProps {
   label: string;
@@ -8,11 +8,11 @@ interface ImageUploadProps {
   required?: boolean;
 }
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({ 
-  label, 
-  currentImage, 
+export const ImageUpload: React.FC<ImageUploadProps> = ({
+  label,
+  currentImage,
   onImageChange,
-  required = false 
+  required = false,
 }) => {
   const [preview, setPreview] = useState<string | null>(currentImage || null);
   const [uploading, setUploading] = useState(false);
@@ -22,14 +22,14 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file");
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image size should be less than 5MB');
+      alert("Image size should be less than 5MB");
       return;
     }
 
@@ -54,8 +54,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       onImageChange(downloadURL);
       */
     } catch (error) {
-      console.error('Error uploading image:', error);
-      alert('Failed to upload image');
+      console.error("Error uploading image:", error);
+      alert("Failed to upload image");
     } finally {
       setUploading(false);
     }
@@ -63,7 +63,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const handleRemove = () => {
     setPreview(null);
-    onImageChange('');
+    onImageChange("");
   };
 
   return (
@@ -71,12 +71,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       <label className="block text-gray-700 mb-2">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-      
+
       {preview ? (
         <div className="relative group">
-          <img 
-            src={preview} 
-            alt="Preview" 
+          <img
+            src={preview}
+            alt="Preview"
             className="w-full h-48 object-cover rounded-lg border-2 border-gray-300"
           />
           <button
@@ -96,7 +96,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               <>
                 <ImageIcon className="w-10 h-10 text-gray-400 mb-3" />
                 <p className="mb-2 text-sm text-gray-500">
-                  <span className="font-semibold">Click to upload</span> or drag and drop
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
                 </p>
                 <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
               </>

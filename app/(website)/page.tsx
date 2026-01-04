@@ -30,6 +30,10 @@ export default async function Page() {
     getFooterServer(),
   ]);
 
+  console.log("🏠 Home Page - Products count:", productsData.length);
+  console.log("🏠 Home Page - Categories count:", categoriesData.length);
+  console.log("🏠 Home Page - Sample product:", productsData[0]);
+
   return (
     <div>
       <Hero

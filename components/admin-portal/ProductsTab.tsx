@@ -79,9 +79,18 @@ export default function ProductsTab() {
 
   const handleDeleteProduct = async (productId: string) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      await deleteProduct(productId);
-      setProducts(products.filter((p) => p.id !== productId));
-      toast.success("Product deleted successfully");
+      try {
+        await deleteProduct(productId);
+        // Refresh products from server
+        const productsData = await getProducts();
+        setProducts(
+          productsData.map((p) => ({ ...p, id: p.id || "" })) as Product[]
+        );
+        toast.success("Product deleted successfully");
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        toast.error("Failed to delete product");
+      }
     }
   };
 
@@ -99,19 +108,33 @@ export default function ProductsTab() {
           : product.description,
     };
 
-    if (editingProduct) {
-      await updateProduct(safeProduct.id, safeProduct);
-      setProducts(
-        products.map((p) => (p.id === safeProduct.id ? safeProduct : p))
-      );
-      toast.success("Product updated successfully");
-    } else {
-      const { id } = await addProduct(safeProduct);
-      setProducts([...products, { ...safeProduct, id }]);
-      toast.success("Product added successfully");
+    try {
+      if (editingProduct) {
+        // When updating, remove id from the data
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, ...productData } = safeProduct;
+        await updateProduct(id, productData);
+        // Refresh products from server to get the latest data
+        const productsData = await getProducts();
+        setProducts(
+          productsData.map((p) => ({ ...p, id: p.id || "" })) as Product[]
+        );
+        toast.success("Product updated successfully");
+      } else {
+        await addProduct(safeProduct);
+        // Refresh products from server after adding
+        const productsData = await getProducts();
+        setProducts(
+          productsData.map((p) => ({ ...p, id: p.id || "" })) as Product[]
+        );
+        toast.success("Product added successfully");
+      }
+      setShowModal(false);
+      setEditingProduct(null);
+    } catch (error) {
+      console.error("Error saving product:", error);
+      toast.error("Failed to save product");
     }
-    setShowModal(false);
-    setEditingProduct(null);
   };
 
   const getCategoryName = (categoryId: string) => {
@@ -124,6 +147,16 @@ export default function ProductsTab() {
     selectedCategory === "all"
       ? products
       : products.filter((p) => p.categoryId === selectedCategory);
+
+  // Debug: Check for duplicate IDs
+  useEffect(() => {
+    const ids = products.map((p) => p.id);
+    const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+    if (duplicates.length > 0) {
+      console.error("Duplicate product IDs found:", duplicates);
+      console.error("All products:", products);
+    }
+  }, [products]);
 
   if (loading) return <div>Loading...</div>;
 
@@ -276,7 +309,7 @@ export default function ProductsTab() {
                 </TableRow>
               ))}
             </TableBody>
-            <TableCaption>List of all products</TableCaption>
+            <TableCaption className="mb-8">List of all products</TableCaption>
           </Table>
         )}
       </div>
