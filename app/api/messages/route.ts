@@ -25,15 +25,27 @@ export async function POST(request: NextRequest) {
       productImage: productImage || "",
     });
 
-    // Send Telegram notification (non-blocking)
+    console.log(`Message saved to Firestore: ${messageId}`);
+
+    // Send Telegram notification (non-blocking, won't fail the request)
     sendTelegramNotification({
       customerName: customerName || "Not provided",
       phoneNumber,
       productName,
       productId,
-    }).catch((error) => {
-      console.error("Failed to send Telegram notification:", error);
-    });
+    })
+      .then((success) => {
+        if (success) {
+          console.log("Telegram notification sent successfully");
+        } else {
+          console.warn(
+            "Telegram notification failed (check credentials or network)"
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Telegram notification error:", error);
+      });
 
     return NextResponse.json({ success: true, messageId }, { status: 201 });
   } catch (error) {
