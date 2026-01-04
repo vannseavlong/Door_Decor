@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import { ProductRecord } from "@/lib/firebase/product";
 import ProductCode from "@/components/product/ProductCode";
 import ProductStats from "@/components/product/ProductStats";
+import RequestQuoteDialog from "@/components/product/RequestQuoteDialog";
 import { useTranslate } from "@/lib/utils/useTranslate";
 
 type Props = { product: ProductRecord };
@@ -12,6 +13,7 @@ type Props = { product: ProductRecord };
 export default function ProductInfoActions({ product }: Props) {
   const { lang } = useTranslate();
   const currentLocale = lang || "en";
+  const [showQuoteDialog, setShowQuoteDialog] = useState(false);
 
   // Convert productCode object to array for ProductCode component with proper locale support
   const productCodeRows = product.productCode
@@ -45,15 +47,20 @@ export default function ProductInfoActions({ product }: Props) {
       } catch {}
     } catch {}
 
-    toast.success("Redirecting to contact form...");
-    setTimeout(() => {
-      const el = document.getElementById("contact");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    }, 150);
+    // Open quote dialog
+    setShowQuoteDialog(true);
   };
 
   // Use product code if available, otherwise fallback to product name
   const displayCode = product.code || product.id || product.name.en;
+
+  // Get product name (localized if available)
+  const productName =
+    typeof product.name === "string"
+      ? product.name
+      : currentLocale === "kh" && product.name.km
+      ? product.name.km
+      : product.name.en;
 
   return (
     <div>
@@ -70,6 +77,15 @@ export default function ProductInfoActions({ product }: Props) {
         </button>
         <ProductStats productId={product.id ?? "unknown"} />
       </div>
+
+      {/* Quote Request Dialog */}
+      <RequestQuoteDialog
+        open={showQuoteDialog}
+        onClose={() => setShowQuoteDialog(false)}
+        productId={product.id ?? "unknown"}
+        productName={productName}
+        productImage={product.imageUrl || ""}
+      />
     </div>
   );
 }

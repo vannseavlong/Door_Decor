@@ -10,6 +10,7 @@ import {
   Layout,
   FileText,
   Image as ImageIcon,
+  Mail,
 } from "lucide-react";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ import {
   ProductsTab,
   CategoriesTab,
   InstallationTab,
+  MessagesTab,
   FooterTab,
   AdminBottomBar,
 } from "@/components/admin-portal";
@@ -30,6 +32,7 @@ type TabType =
   | "products"
   | "categories"
   | "installations"
+  | "messages"
   | "footer";
 
 export default function AdminDashboardPage() {
@@ -145,7 +148,7 @@ export default function AdminDashboardPage() {
                 <ImageIcon className="w-5 h-5 inline-block mr-2" />
                 Installations
               </button>
-              {/* <button
+              <button
                 onClick={() => setActiveTab("messages")}
                 className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === "messages"
@@ -155,7 +158,7 @@ export default function AdminDashboardPage() {
               >
                 <Mail className="w-5 h-5 inline-block mr-2" />
                 Messages
-              </button> */}
+              </button>
               <button
                 onClick={() => setActiveTab("footer")}
                 className={`py-4 px-6 border-b-2 font-medium text-sm transition-colors ${
@@ -178,6 +181,7 @@ export default function AdminDashboardPage() {
           {activeTab === "products" && <ProductsTab />}
           {activeTab === "categories" && <CategoriesTab />}
           {activeTab === "installations" && <InstallationTab />}
+          {activeTab === "messages" && <MessagesTab />}
           {activeTab === "footer" && <FooterTab />}
         </div>
 
