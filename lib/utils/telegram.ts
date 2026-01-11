@@ -7,8 +7,19 @@ export async function sendTelegramNotification(params: {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
 
+  // Debug logging for Vercel
+  console.log("🔍 Telegram Debug:", {
+    hasBotToken: !!botToken,
+    hasTokenLength: botToken?.length || 0,
+    hasChatId: !!chatId,
+    environment: process.env.NODE_ENV,
+  });
+
   if (!botToken || !chatId) {
-    console.warn("Telegram credentials not configured");
+    console.error("❌ Telegram credentials not configured", {
+      botToken: botToken ? "SET" : "MISSING",
+      chatId: chatId ? "SET" : "MISSING",
+    });
     return false;
   }
 
@@ -24,6 +35,8 @@ _Please follow up with the customer._
   `.trim();
 
   try {
+    console.log("📤 Attempting to send Telegram message...");
+    
     // Add timeout controller (10 seconds)
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -48,21 +61,29 @@ _Please follow up with the customer._
 
     if (!response.ok) {
       const error = await response.text();
-      console.error("Telegram API error response:", error);
+      console.error("❌ Telegram API error response:", {
+        status: response.status,
+        statusText: response.statusText,
+        error: error.substring(0, 200),
+      });
       return false;
     }
 
-    console.log("Telegram notification sent successfully");
+    console.log("✅ Telegram notification sent successfully");
     return true;
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === "AbortError") {
-        console.error("Telegram notification timeout after 10s");
+        console.error("⏱️ Telegram notification timeout after 10s");
       } else {
-        console.error("Error sending Telegram notification:", error.message);
+        console.error("❌ Error sending Telegram:", {
+          name: error.name,
+          message: error.message,
+          stack: error.stack?.substring(0, 200),
+        });
       }
     } else {
-      console.error("Error sending Telegram notification:", error);
+      console.error("❌ Unknown error sending Telegram:", error);
     }
     return false;
   }

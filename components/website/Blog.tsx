@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+// import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { MapPin, Calendar, ArrowRight } from "lucide-react";
+// import { motion } from "framer-motion";
+import { MapPin, Calendar } from "lucide-react";
 import { useTranslate } from "@/lib/utils/useTranslate";
 
 type BlogItem = {

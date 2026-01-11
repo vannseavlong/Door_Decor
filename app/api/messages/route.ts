@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
     console.log(`Message saved to Firestore: ${messageId}`);
 
     // Send Telegram notification (non-blocking, won't fail the request)
+    console.log("🚀 Initiating Telegram notification...");
     sendTelegramNotification({
       customerName: customerName || "Not provided",
       phoneNumber,
@@ -36,15 +37,15 @@ export async function POST(request: NextRequest) {
     })
       .then((success) => {
         if (success) {
-          console.log("Telegram notification sent successfully");
+          console.log("✅ Telegram notification sent successfully");
         } else {
           console.warn(
-            "Telegram notification failed (check credentials or network)"
+            "⚠️ Telegram notification failed (check logs above for details)"
           );
         }
       })
       .catch((error) => {
-        console.error("Telegram notification error:", error);
+        console.error("❌ Telegram notification error:", error);
       });
 
     return NextResponse.json({ success: true, messageId }, { status: 201 });

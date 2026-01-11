@@ -57,7 +57,7 @@ export default function AboutClient({
 
       {/* About section */}
       <section className="w-full py-12 md:py-16">
-        <div style={{ maxWidth: 1440 }}>
+        <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
               <h2
@@ -91,7 +91,7 @@ export default function AboutClient({
 
       {/* Our Values */}
       <section className="w-full py-12 md:py-16">
-        <div className="" style={{ maxWidth: 1440 }}>
+        <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
           <h3
             className={`heading-3 text-center mb-8 text-brand-dark ${
               currentLocale === "kh" ? "font-khmer" : ""

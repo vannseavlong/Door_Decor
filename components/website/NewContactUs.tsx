@@ -174,8 +174,8 @@ export default function NewContactUs({
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div className="flex items-center gap-2">
-            <FaPhoneAlt className="text-brand-primary" />
-            <span className="body-lg font-medium font-khmer">
+            <FaPhoneAlt className="text-brand-primary shrink-0" />
+            <span className="body-lg font-medium font-khmer max-[439px]:text-sm max-[439px]:leading-tight">
               {phoneNumber}
             </span>
           </div>
