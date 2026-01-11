@@ -19,12 +19,7 @@ export default async function PublicLayout({
   return (
     <>
       <Navbar categories={categoriesData} />
-      <main
-        className="mx-auto px-4 sm:px-6 lg:px-8 pt-16"
-        style={{ maxWidth: 1440 }}
-      >
-        {children}
-      </main>
+      <main className="pt-16">{children}</main>
       <Footer
         footerData={footerData ?? undefined}
         categories={categoriesData}

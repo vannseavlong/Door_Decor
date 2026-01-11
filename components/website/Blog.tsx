@@ -116,6 +116,7 @@ export default function Blog({
                 alt={post.title}
                 fill
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                quality={100}
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
               <div className="absolute inset-0 p-8 flex flex-col justify-end">
@@ -160,6 +161,7 @@ export default function Blog({
                   alt={post.title}
                   fill
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  quality={100}
                 />
                 <div className="absolute top-4 left-4">
                   <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 rounded-full">

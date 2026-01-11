@@ -1,6 +1,7 @@
 import { initializeApp, getApps, type FirebaseOptions } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
+import { getStorage, type FirebaseStorage } from "firebase/storage";
 import { firebaseConfig, isFirebaseConfigured } from "../config/firebase";
 
 // Log configuration status for debugging
@@ -12,6 +13,7 @@ if (typeof window !== "undefined") {
       : "missing",
     projectId: firebaseConfig.projectId || "missing",
     authDomain: firebaseConfig.authDomain || "missing",
+    storageBucket: firebaseConfig.storageBucket || "missing",
   });
 }
 
@@ -22,3 +24,4 @@ const app = !getApps().length
 
 export const auth: Auth = getAuth(app);
 export const db: Firestore = getFirestore(app);
+export const storage: FirebaseStorage = getStorage(app);

@@ -23,6 +23,7 @@ export default function ImagePreview({ images, alt }: Props) {
             priority={true}
             sizes="(min-width: 768px) 50vw, 100vw"
             className="object-cover"
+            quality={100}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -60,6 +61,7 @@ export default function ImagePreview({ images, alt }: Props) {
                 width={64}
                 height={64}
                 className="object-cover"
+                quality={100}
               />
             </button>
           ))}

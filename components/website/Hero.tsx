@@ -82,6 +82,7 @@ export default function Hero({ title, description, imageUrl }: HeroProps) {
               height={600}
               className="object-contain"
               priority
+              quality={100}
             />
           </div>
         </motion.div>
@@ -101,6 +102,7 @@ export default function Hero({ title, description, imageUrl }: HeroProps) {
           width={720}
           height={480}
           className="w-full object-contain"
+          quality={100}
         />
       </motion.div>
     </section>
