@@ -27,28 +27,30 @@ export async function POST(request: NextRequest) {
 
     console.log(`Message saved to Firestore: ${messageId}`);
 
-    // Send Telegram notification (non-blocking, won't fail the request)
-    console.log("🚀 Initiating Telegram notification...");
-    sendTelegramNotification({
+    // Send Telegram notification (wait for response like portfolio)
+    console.log("🚀 Sending Telegram notification...");
+    const telegramSuccess = await sendTelegramNotification({
       customerName: customerName || "Not provided",
       phoneNumber,
       productName,
       productId,
-    })
-      .then((success) => {
-        if (success) {
-          console.log("✅ Telegram notification sent successfully");
-        } else {
-          console.warn(
-            "⚠️ Telegram notification failed (check logs above for details)"
-          );
-        }
-      })
-      .catch((error) => {
-        console.error("❌ Telegram notification error:", error);
-      });
+    });
 
-    return NextResponse.json({ success: true, messageId }, { status: 201 });
+    if (telegramSuccess) {
+      console.log("✅ Telegram sent successfully");
+    } else {
+      console.warn("⚠️ Telegram failed (but Firestore saved)");
+    }
+
+    // Return response like portfolio (with 'ok' field)
+    return NextResponse.json(
+      {
+        success: true,
+        ok: telegramSuccess,
+        messageId,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error creating message:", error);
     return NextResponse.json(

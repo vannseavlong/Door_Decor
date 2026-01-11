@@ -57,11 +57,22 @@ export default function RequestQuoteDialog({
         }),
       });
 
-      if (!response.ok) {
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
         throw new Error("Failed to submit quote request");
       }
 
-      toast.success("Quote request submitted! We'll contact you soon.");
+      // Show appropriate message based on Telegram status
+      if (result.ok) {
+        toast.success("Quote request submitted! We'll contact you soon.");
+      } else {
+        toast.success(
+          "Quote request saved! (Notification pending - we'll still contact you)"
+        );
+        console.warn("Telegram notification failed but request was saved");
+      }
+
       setCustomerName("");
       setPhoneNumber("");
       onClose();

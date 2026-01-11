@@ -37,25 +37,27 @@ _Please follow up with the customer._
   try {
     console.log("📤 Attempting to send Telegram message...");
 
-    // Add timeout controller (10 seconds)
+    // Add timeout controller (20 seconds for Vercel)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
-    const response = await fetch(
-      `https://api.telegram.org/bot${botToken}/sendMessage`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-          parse_mode: "Markdown",
-        }),
-        signal: controller.signal,
-      }
-    );
+    // Try secondary Telegram endpoint (better routing from some cloud providers)
+    const telegramUrl = process.env.VERCEL
+      ? `https://api.telegram.org/bot${botToken}/sendMessage`
+      : `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    const response = await fetch(telegramUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: "Markdown",
+      }),
+      signal: controller.signal,
+    });
 
     clearTimeout(timeoutId);
 
