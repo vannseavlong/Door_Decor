@@ -10,6 +10,7 @@ import { getCategoriesServer } from "@/lib/firebase/category";
 import { getProductsServer } from "@/lib/firebase/product";
 import { getInstallationsServer } from "@/lib/firebase/installations";
 import { getFooterServer } from "@/lib/firebase/footer";
+import SecondHero from "@/components/website/SecondHero";
 
 // Enable ISR - revalidate every 60 seconds
 export const revalidate = 60;
@@ -36,21 +37,31 @@ export default async function Page() {
 
   return (
     <div>
-      <Hero
+      {/* <Hero
         title={heroData?.title}
         description={heroData?.description}
         imageUrl={heroData?.imageUrl}
+      /> */}
+
+      <SecondHero
+        bannerEnLandscape={heroData?.bannerEnLandscape}
+        bannerEnPortrait={heroData?.bannerEnPortrait}
+        bannerKmLandscape={heroData?.bannerKmLandscape}
+        bannerKmPortrait={heroData?.bannerKmPortrait}
       />
-      <ProductsSection categories={categoriesData} products={productsData} />
-      <Blog posts={installationsData} />
-      {/* <ContactSection /> */}
-      <NewContactUs
-        contactData={{
-          phone: footerData?.phone,
-          socialMedia: footerData?.socialMedia,
-        }}
-      />
-      {/* <LocationSection /> */}
+
+      <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: 1440 }}>
+        <ProductsSection categories={categoriesData} products={productsData} />
+        <Blog posts={installationsData} />
+        {/* <ContactSection /> */}
+        <NewContactUs
+          contactData={{
+            phone: footerData?.phone,
+            socialMedia: footerData?.socialMedia,
+          }}
+        />
+        {/* <LocationSection /> */}
+      </div>
     </div>
   );
 }

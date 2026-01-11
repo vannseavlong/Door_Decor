@@ -10,6 +10,11 @@ import {
 
 export default function HeroSection() {
   const [heroImage, setHeroImage] = useState("");
+  const [bannerEnLandscape, setBannerEnLandscape] = useState("");
+  const [bannerEnPortrait, setBannerEnPortrait] = useState("");
+  const [bannerKmLandscape, setBannerKmLandscape] = useState("");
+  const [bannerKmPortrait, setBannerKmPortrait] = useState("");
+
   const [form, setForm] = useState({
     title_en: "",
     title_km: "",
@@ -17,6 +22,7 @@ export default function HeroSection() {
     description_km: "",
   });
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -25,15 +31,20 @@ export default function HeroSection() {
         const data = await getHeroSection();
         if (data) {
           setForm({
-            title_en: data.title.en,
-            title_km: data.title.km,
-            description_en: data.description.en,
-            description_km: data.description.km,
+            title_en: data.title?.en || "",
+            title_km: data.title?.km || "",
+            description_en: data.description?.en || "",
+            description_km: data.description?.km || "",
           });
-          setHeroImage(data.imageUrl);
+          setHeroImage(data.imageUrl || "");
+          setBannerEnLandscape(data.bannerEnLandscape || "");
+          setBannerEnPortrait(data.bannerEnPortrait || "");
+          setBannerKmLandscape(data.bannerKmLandscape || "");
+          setBannerKmPortrait(data.bannerKmPortrait || "");
         }
       } catch (error) {
         console.error("Error loading hero section:", error);
+        toast.error("Failed to load hero section data");
         // Allow form to display with empty fields for first-time setup
       }
       setLoading(false);
@@ -42,12 +53,52 @@ export default function HeroSection() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await saveHeroSection({
-      title: { en: form.title_en, km: form.title_km },
-      description: { en: form.description_en, km: form.description_km },
-      imageUrl: heroImage,
-    });
-    toast.success("Hero section updated successfully!");
+    setSaving(true);
+
+    try {
+      const dataToSave = {
+        title: { en: form.title_en, km: form.title_km },
+        description: { en: form.description_en, km: form.description_km },
+        imageUrl: heroImage,
+        bannerEnLandscape,
+        bannerEnPortrait,
+        bannerKmLandscape,
+        bannerKmPortrait,
+      };
+
+      console.log("📤 Saving hero section data:");
+      console.log("- Title EN:", dataToSave.title.en);
+      console.log("- Title KM:", dataToSave.title.km);
+      console.log("- Hero Image length:", heroImage?.length || 0);
+      console.log(
+        "- Banner EN Landscape length:",
+        bannerEnLandscape?.length || 0
+      );
+      console.log(
+        "- Banner EN Portrait length:",
+        bannerEnPortrait?.length || 0
+      );
+      console.log(
+        "- Banner KM Landscape length:",
+        bannerKmLandscape?.length || 0
+      );
+      console.log(
+        "- Banner KM Portrait length:",
+        bannerKmPortrait?.length || 0
+      );
+
+      // Save directly to Firestore (images are already base64 strings)
+      await saveHeroSection(dataToSave);
+
+      console.log("✅ Save successful!");
+      toast.success("Hero section updated successfully!");
+    } catch (error: any) {
+      console.error("❌ Error saving hero section:", error);
+      const errorMessage = error?.message || "Unknown error occurred";
+      toast.error(`Failed to save: ${errorMessage}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -122,13 +173,63 @@ export default function HeroSection() {
           label="Hero Section Image"
           currentImage={heroImage}
           onImageChange={setHeroImage}
+          maxWidth={1600}
+          maxHeight={1600}
+          quality={0.88}
           required
         />
+
+        {/* Banner Images Section */}
+        <div className="border-t pt-6 mt-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Full Banner Images (for SecondHero component)
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            📌 For best quality: Upload at 1800px width, quality 85%. Images are
+            automatically compressed to fit in database.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ImageUpload
+              label="Banner English (Landscape)"
+              currentImage={bannerEnLandscape}
+              onImageChange={setBannerEnLandscape}
+              maxWidth={1800}
+              maxHeight={1800}
+              quality={0.85}
+            />
+            <ImageUpload
+              label="Banner English (Portrait)"
+              currentImage={bannerEnPortrait}
+              onImageChange={setBannerEnPortrait}
+              maxWidth={1800}
+              maxHeight={1800}
+              quality={0.85}
+            />
+            <ImageUpload
+              label="Banner Khmer (Landscape)"
+              currentImage={bannerKmLandscape}
+              onImageChange={setBannerKmLandscape}
+              maxWidth={1800}
+              maxHeight={1800}
+              quality={0.85}
+            />
+            <ImageUpload
+              label="Banner Khmer (Portrait)"
+              currentImage={bannerKmPortrait}
+              onImageChange={setBannerKmPortrait}
+              maxWidth={1800}
+              maxHeight={1800}
+              quality={0.85}
+            />
+          </div>
+        </div>
+
         <button
           type="submit"
-          className="bg-brand-primary text-white px-6 py-2 rounded-lg hover:bg-brand-primary/90 transition-colors"
+          disabled={saving}
+          className="bg-brand-primary text-white px-6 py-2 rounded-lg hover:bg-brand-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Save Changes
+          {saving ? "Saving..." : "Save Changes"}
         </button>
       </form>
     </div>

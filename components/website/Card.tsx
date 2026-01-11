@@ -43,6 +43,7 @@ export default function Card({
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1440px) 50vw, 25vw"
           className="object-cover"
+          quality={100}
         />
         <motion.div
           className="absolute top-3 right-3"
