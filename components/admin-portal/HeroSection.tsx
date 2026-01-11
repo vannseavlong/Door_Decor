@@ -184,10 +184,10 @@ export default function HeroSection() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Full Banner Images (for SecondHero component)
           </h3>
-          <p className="text-sm text-gray-600 mb-4">
+          {/* <p className="text-sm text-gray-600 mb-4">
             📌 For best quality: Upload at 1800px width, quality 85%. Images are
             automatically compressed to fit in database.
-          </p>
+          </p> */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ImageUpload
               label="Banner English (Landscape)"
