@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Card from "@/components/website/Card";
 import Link from "next/link";
@@ -53,14 +53,20 @@ const itemVariants = {
 
 export default function ProductsSection({ products, categories }: Props) {
   const { t, lang } = useTranslate();
-  const currentLocale = lang || "en";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentLocale = mounted ? lang || "en" : "en";
 
   console.log("🎨 ProductsSection - Received products:", products);
   console.log("🎨 ProductsSection - Products length:", products?.length || 0);
   console.log("🎨 ProductsSection - Received categories:", categories);
   console.log(
     "🎨 ProductsSection - Categories length:",
-    categories?.length || 0
+    categories?.length || 0,
   );
 
   // use passed products when available; otherwise fall back to local dummy data
@@ -70,7 +76,7 @@ export default function ProductsSection({ products, categories }: Props) {
   console.log("🎨 ProductsSection - Using items count:", items.length);
   console.log(
     "🎨 ProductsSection - Is using dummy data?",
-    items === dummyProducts
+    items === dummyProducts,
   );
 
   // Helper to get category name based on locale
@@ -103,7 +109,7 @@ export default function ProductsSection({ products, categories }: Props) {
       acc[catId].push(p);
       return acc;
     },
-    {}
+    {},
   );
 
   console.log("📊 Grouped products by category:", grouped);
@@ -114,13 +120,13 @@ export default function ProductsSection({ products, categories }: Props) {
       firestoreDocId: c.firestoreId,
       internalId: c.id,
       name: c.name,
-    }))
+    })),
   );
 
   console.log("\n🚨 =============== ID MATCHING CHECK =============== 🚨");
   console.log(
     "Category internal IDs:",
-    categories?.map((c) => c.id)
+    categories?.map((c) => c.id),
   );
   console.log("Product categoryIds:", Object.keys(grouped));
   console.log("🚨 ================================================== 🚨\n");
@@ -131,7 +137,7 @@ export default function ProductsSection({ products, categories }: Props) {
       const found = categories.find((c) => c.id === groupedId);
       console.log(
         `📊 Product categoryId "${groupedId}" matches category:`,
-        found ? `✅ ${found.name.en}` : "❌ NO MATCH"
+        found ? `✅ ${found.name.en}` : "❌ NO MATCH",
       );
     });
   }
@@ -147,7 +153,7 @@ export default function ProductsSection({ products, categories }: Props) {
             `📊 Category internal id ${c.id} (${c.name.en}) has products:`,
             hasProducts ? "✅ YES" : "❌ NO",
             "Count:",
-            hasProducts?.length || 0
+            hasProducts?.length || 0,
           );
           return hasProducts;
         })
@@ -157,13 +163,13 @@ export default function ProductsSection({ products, categories }: Props) {
               id,
               name: { en: id, km: id },
               description: { en: "", km: "" },
-            } as CategoryRecord)
+            }) as CategoryRecord,
         );
 
   console.log("📊 Categories with products:", categoriesWithProducts);
   console.log(
     "📊 Categories with products count:",
-    categoriesWithProducts.length
+    categoriesWithProducts.length,
   );
 
   // Safety check: if no categories matched, display all products under their category IDs
@@ -176,7 +182,7 @@ export default function ProductsSection({ products, categories }: Props) {
           if (matchingCategory) {
             console.log(
               `✅ Found matching category for internal id ${id}:`,
-              matchingCategory.name
+              matchingCategory.name,
             );
             return matchingCategory;
           }
@@ -197,7 +203,7 @@ export default function ProductsSection({ products, categories }: Props) {
   console.log("📊 Final categories to display:", finalCategories.length);
   console.log(
     "📊 Final categories:",
-    finalCategories.map((c) => ({ id: c.id, name: c.name }))
+    finalCategories.map((c) => ({ id: c.id, name: c.name })),
   );
 
   const slugify = (s: string) =>
@@ -205,7 +211,7 @@ export default function ProductsSection({ products, categories }: Props) {
       s
         .toLowerCase()
         .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "")
+        .replace(/[^a-z0-9-]/g, ""),
     );
 
   return (

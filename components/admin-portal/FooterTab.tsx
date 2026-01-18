@@ -10,6 +10,7 @@ import {
   Send,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Loading } from "@/components/ui/spinner";
 import {
   getFooter,
   saveFooter,
@@ -65,6 +66,8 @@ export default function FooterTab() {
       setLoading(false);
     })();
   }, []);
+
+  if (loading) return <Loading text="Loading footer data..." />;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

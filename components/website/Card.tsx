@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { Eye } from "lucide-react";
 
 type CardProps = {
   src: string;
@@ -14,6 +15,10 @@ type CardProps = {
   href?: string;
 };
 
+function randBetween(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export default function Card({
   src,
   title = "WPC Door",
@@ -22,6 +27,23 @@ export default function Card({
   href,
 }: CardProps) {
   const link = href ? href : id ? `/product/${id}` : undefined;
+  const [viewCount, setViewCount] = useState(0);
+
+  useEffect(() => {
+    if (!id) return;
+    const key = `product-stats-${id}`;
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      try {
+        const stats = JSON.parse(raw);
+        setViewCount(stats.views || 0);
+      } catch {
+        setViewCount(randBetween(120, 2400));
+      }
+    } else {
+      setViewCount(randBetween(120, 2400));
+    }
+  }, [id]);
 
   const content = (
     <motion.article
@@ -66,6 +88,12 @@ export default function Card({
         <h3 className="body-base font-medium text-brand-dark font-khmer">
           {title}
         </h3>
+        {viewCount > 0 && (
+          <div className="flex items-center gap-1.5 mt-2 text-gray-500 text-sm">
+            <Eye className="w-4 h-4" />
+            <span>{viewCount.toLocaleString()} Views</span>
+          </div>
+        )}
       </div>
     </motion.article>
   );

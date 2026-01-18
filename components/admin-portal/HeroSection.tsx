@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ImageUpload } from "./ImageUpload";
+import { Loading } from "@/components/ui/spinner";
 import {
   getHeroSection,
   saveHeroSection,
@@ -51,6 +52,8 @@ export default function HeroSection() {
     })();
   }, []);
 
+  if (loading) return <Loading text="Loading hero section..." />;
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -72,19 +75,19 @@ export default function HeroSection() {
       console.log("- Hero Image length:", heroImage?.length || 0);
       console.log(
         "- Banner EN Landscape length:",
-        bannerEnLandscape?.length || 0
+        bannerEnLandscape?.length || 0,
       );
       console.log(
         "- Banner EN Portrait length:",
-        bannerEnPortrait?.length || 0
+        bannerEnPortrait?.length || 0,
       );
       console.log(
         "- Banner KM Landscape length:",
-        bannerKmLandscape?.length || 0
+        bannerKmLandscape?.length || 0,
       );
       console.log(
         "- Banner KM Portrait length:",
-        bannerKmPortrait?.length || 0
+        bannerKmPortrait?.length || 0,
       );
 
       // Save directly to Firestore (images are already base64 strings)

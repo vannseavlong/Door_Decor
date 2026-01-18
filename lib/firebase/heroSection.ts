@@ -1,6 +1,8 @@
 import { db as adminDb } from "@/lib/firebase/server";
+import { unstable_cache } from "next/cache";
 
 const HERO_SECTION = "heroSection";
+const CACHE_TAG_HERO = "hero-section";
 
 export type HeroSectionRecord = {
   title: { en: string; km: string };
@@ -12,11 +14,18 @@ export type HeroSectionRecord = {
   bannerKmPortrait?: string;
 };
 
-export async function getHeroSectionServer(): Promise<HeroSectionRecord | null> {
-  const snap = await adminDb.collection(HERO_SECTION).doc("main").get();
-  if (!snap.exists) return null;
-  return snap.data() as HeroSectionRecord;
-}
+export const getHeroSectionServer = unstable_cache(
+  async (): Promise<HeroSectionRecord | null> => {
+    const snap = await adminDb.collection(HERO_SECTION).doc("main").get();
+    if (!snap.exists) return null;
+    return snap.data() as HeroSectionRecord;
+  },
+  [CACHE_TAG_HERO],
+  {
+    revalidate: 60, // Cache for 60 seconds
+    tags: [CACHE_TAG_HERO],
+  },
+);
 
 export async function updateHeroSectionServer(data: HeroSectionRecord) {
   console.log("🔥 Firebase: Updating hero section in Firestore...");
@@ -26,7 +35,9 @@ export async function updateHeroSectionServer(data: HeroSectionRecord) {
   console.log("🔥 Has bannerKmLandscape:", !!data.bannerKmLandscape);
   console.log("🔥 Has bannerKmPortrait:", !!data.bannerKmPortrait);
 
+  const { revalidateTag } = await import("next/cache");
   await adminDb.collection(HERO_SECTION).doc("main").set(data, { merge: true });
+  revalidateTag(CACHE_TAG_HERO); // Invalidate cache
   console.log("🔥 Firebase: Update complete!");
   return { ok: true };
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import Card from "@/components/website/Card";
 import { ProductRecord } from "@/lib/firebase/product";
 import { useTranslate } from "@/lib/utils/useTranslate";
@@ -36,15 +35,12 @@ export default function RelatedProducts({ products, currentId }: Props) {
         {items.map((p) => {
           const productName = currentLocale === "kh" ? p.name.km : p.name.en;
           return (
-            <div key={p.id}>
-              <Link href={`/product/${p.id}`} className="block">
-                {/* Render image + title using Card (no internal link) */}
-                <Card
-                  src={p.imageUrl ?? "/imageStock/img1.jpg"}
-                  title={productName}
-                />
-              </Link>
-            </div>
+            <Card
+              key={p.id}
+              id={p.id}
+              src={p.imageUrl ?? "/imageStock/img1.jpg"}
+              title={productName}
+            />
           );
         })}
       </div>
