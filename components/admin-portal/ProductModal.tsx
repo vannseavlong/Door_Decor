@@ -187,7 +187,7 @@ export default function ProductModal({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="block">Description (English) *</Label>
+              <Label className="block">Description (English)</Label>
               <Textarea
                 value={formData.description.en}
                 onChange={(e) =>
@@ -200,11 +200,10 @@ export default function ProductModal({
                   })
                 }
                 rows={4}
-                required
               />
             </div>
             <div className="space-y-2">
-              <Label className="block">Description (Khmer) *</Label>
+              <Label className="block">Description (Khmer)</Label>
               <Textarea
                 value={formData.description.km}
                 onChange={(e) =>
@@ -217,13 +216,12 @@ export default function ProductModal({
                   })
                 }
                 rows={4}
-                required
                 className="font-khmer"
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label className="block">Price *</Label>
+            <Label className="block">Price</Label>
             <Input
               type="text"
               value={formData.price}
@@ -231,7 +229,6 @@ export default function ProductModal({
                 setFormData({ ...formData, price: e.target.value })
               }
               placeholder="e.g., $999 or Contact for price"
-              required
             />
           </div>
           <div className="space-y-2">
@@ -258,17 +255,92 @@ export default function ProductModal({
               </button>
             </div>
 
-            {/* Input Fields */}
-            <div className="space-y-2">
+            {/* Dropdown Select - Full Width */}
+            <Select
+              value={specKey.en}
+              onValueChange={(value) => {
+                const predefinedLabels = [
+                  { en: "Type", km: "ប្រភេទឥវ៉ាន់" },
+                  { en: "Special", km: "លក្ខណៈពិសេស" },
+                  { en: "Warranty", km: "ធានាគុណភាព" },
+                  { en: "Design", km: "រចនាប័ទ្ម" },
+                  { en: "Use Area", km: "តំបន់ប្រើប្រាស់" },
+                  { en: "Door Type", km: "ប្រភេទទ្វារ" },
+                  { en: "Made of", km: "ផលិតអំពី" },
+                ];
+                const selected = predefinedLabels.find((l) => l.en === value);
+                if (selected) {
+                  setSpecKey({ en: selected.en, km: selected.km });
+                } else if (value === "custom") {
+                  setSpecKey({ en: "", km: "" });
+                }
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select label or custom" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Type">Type / ប្រភេទឥវ៉ាន់</SelectItem>
+                <SelectItem value="Special">Special / លក្ខណៈពិសេស</SelectItem>
+                <SelectItem value="Warranty">Warranty / ធានាគុណភាព</SelectItem>
+                <SelectItem value="Design">Design / រចនាប័ទ្ម</SelectItem>
+                <SelectItem value="Use Area">
+                  Use Area / តំបន់ប្រើប្រាស់
+                </SelectItem>
+                <SelectItem value="Door Type">
+                  Door Type / ប្រភេទទ្វារ
+                </SelectItem>
+                <SelectItem value="Made of">Made of / ផលិតអំពី</SelectItem>
+                <SelectItem value="custom">Custom Label...</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Show inputs based on selection */}
+            {specKey.en === "" ? (
+              // Custom label: 4 inputs in 2 rows
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    value={specKey.en}
+                    onChange={(e) =>
+                      setSpecKey({ ...specKey, en: e.target.value })
+                    }
+                    placeholder="Label (Eng)"
+                  />
+                  <Input
+                    type="text"
+                    value={specValue.en}
+                    onChange={(e) =>
+                      setSpecValue({ ...specValue, en: e.target.value })
+                    }
+                    placeholder="Value (Eng)"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    value={specKey.km}
+                    onChange={(e) =>
+                      setSpecKey({ ...specKey, km: e.target.value })
+                    }
+                    placeholder="Label (Kh)"
+                    className="font-khmer"
+                  />
+                  <Input
+                    type="text"
+                    value={specValue.km}
+                    onChange={(e) =>
+                      setSpecValue({ ...specValue, km: e.target.value })
+                    }
+                    placeholder="Value (Kh)"
+                    className="font-khmer"
+                  />
+                </div>
+              </div>
+            ) : (
+              // Predefined label: Only 2 value inputs
               <div className="flex gap-2">
-                <Input
-                  type="text"
-                  value={specKey.en}
-                  onChange={(e) =>
-                    setSpecKey({ ...specKey, en: e.target.value })
-                  }
-                  placeholder="Label (Eng)"
-                />
                 <Input
                   type="text"
                   value={specValue.en}
@@ -276,17 +348,6 @@ export default function ProductModal({
                     setSpecValue({ ...specValue, en: e.target.value })
                   }
                   placeholder="Value (Eng)"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  type="text"
-                  value={specKey.km}
-                  onChange={(e) =>
-                    setSpecKey({ ...specKey, km: e.target.value })
-                  }
-                  placeholder="Label (Kh)"
-                  className="font-khmer"
                 />
                 <Input
                   type="text"
@@ -298,7 +359,7 @@ export default function ProductModal({
                   className="font-khmer"
                 />
               </div>
-            </div>
+            )}
 
             {/* Table Display */}
             {formData.productCode &&
@@ -348,7 +409,7 @@ export default function ProductModal({
                               </td>
                             </tr>
                           );
-                        }
+                        },
                       )}
                     </tbody>
                   </table>
@@ -377,8 +438,8 @@ export default function ProductModal({
                   ? "Updating..."
                   : "Adding..."
                 : product
-                ? "Update"
-                : "Add"}
+                  ? "Update"
+                  : "Add"}
             </Button>
           </DialogFooter>
         </form>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ImageUpload } from "./ImageUpload";
+import { Loading } from "@/components/ui/spinner";
 import {
   getAboutData,
   saveAboutData,
@@ -52,7 +53,7 @@ export default function AboutTab() {
     }
   };
 
-  if (loading) return <div className="p-6">Loading...</div>;
+  if (loading) return <Loading text="Loading about data..." />;
 
   return (
     <div className="bg-white rounded-lg shadow p-6">

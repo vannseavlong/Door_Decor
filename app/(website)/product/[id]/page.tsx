@@ -51,28 +51,32 @@ export default async function ProductPage({ params }: Props) {
       p.categoryId &&
       product.categoryId &&
       p.categoryId === product.categoryId &&
-      p.id !== product.id
+      p.id !== product.id,
   );
 
   return (
     <div className="w-full pt-20">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 gap-y-10 items-start">
-        <div>
-          {/* single-image product display */}
-          <ProductImage
-            src={product.imageUrl}
-            alt={
-              typeof product.name === "string" ? product.name : product.name.en
-            }
-          />
+      <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: 1440 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 gap-y-10 items-start">
+          <div>
+            {/* single-image product display */}
+            <ProductImage
+              src={product.imageUrl}
+              alt={
+                typeof product.name === "string"
+                  ? product.name
+                  : product.name.en
+              }
+            />
+          </div>
+
+          <div className="flex flex-col justify-start h-full w-full">
+            <ProductInfoActions product={product} />
+          </div>
         </div>
 
-        <div className="flex flex-col justify-start h-full w-full">
-          <ProductInfoActions product={product} />
-        </div>
+        <RelatedProducts products={related} currentId={product.id} />
       </div>
-
-      <RelatedProducts products={related} currentId={product.id} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Eye } from "lucide-react";
 
 type Props = { productId: string };
@@ -15,9 +15,10 @@ function randBetween(min: number, max: number) {
 
 export default function ProductStats({ productId }: Props) {
   const [stats, setStats] = useState<Stats>({ views: 0, clicks: 0 });
+  const hasIncrementedRef = useRef(false);
 
   useEffect(() => {
-    if (!productId) return;
+    if (!productId || hasIncrementedRef.current) return;
     const key = STORAGE_KEY(productId);
     const raw = localStorage.getItem(key);
     let s: Stats;
@@ -34,10 +35,11 @@ export default function ProductStats({ productId }: Props) {
       };
     }
 
-    // increment view on mount
+    // increment view on mount (only once)
     s = { ...s, views: s.views + 1 };
     localStorage.setItem(key, JSON.stringify(s));
     setStats(s);
+    hasIncrementedRef.current = true;
   }, [productId]);
 
   useEffect(() => {

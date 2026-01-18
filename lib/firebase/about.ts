@@ -1,7 +1,9 @@
 import { db as adminDb } from "@/lib/firebase/server";
+import { unstable_cache } from "next/cache";
 
 const ABOUT_COLLECTION = "about";
 const ABOUT_DOC_ID = "main";
+const CACHE_TAG_ABOUT = "about-data";
 
 export type AboutDataRecord = {
   heroImage: string;
@@ -12,26 +14,35 @@ export type AboutDataRecord = {
   additionalImage: string;
 };
 
-export async function getAboutDataServer(): Promise<AboutDataRecord | null> {
-  try {
-    const snap = await adminDb
-      .collection(ABOUT_COLLECTION)
-      .doc(ABOUT_DOC_ID)
-      .get();
-    if (!snap.exists) return null;
-    return snap.data() as AboutDataRecord;
-  } catch (error) {
-    console.error("Error getting about data:", error);
-    return null;
-  }
-}
+export const getAboutDataServer = unstable_cache(
+  async (): Promise<AboutDataRecord | null> => {
+    try {
+      const snap = await adminDb
+        .collection(ABOUT_COLLECTION)
+        .doc(ABOUT_DOC_ID)
+        .get();
+      if (!snap.exists) return null;
+      return snap.data() as AboutDataRecord;
+    } catch (error) {
+      console.error("Error getting about data:", error);
+      return null;
+    }
+  },
+  [CACHE_TAG_ABOUT],
+  {
+    revalidate: 60, // Cache for 60 seconds
+    tags: [CACHE_TAG_ABOUT],
+  },
+);
 
 export async function updateAboutDataServer(data: AboutDataRecord) {
   try {
+    const { revalidateTag } = await import("next/cache");
     await adminDb
       .collection(ABOUT_COLLECTION)
       .doc(ABOUT_DOC_ID)
       .set(data, { merge: true });
+    revalidateTag(CACHE_TAG_ABOUT); // Invalidate cache
     return { ok: true };
   } catch (error) {
     console.error("Error updating about data:", error);

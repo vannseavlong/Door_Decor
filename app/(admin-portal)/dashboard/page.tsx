@@ -52,43 +52,31 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
+      {/* Header (fixed) */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center">
               <Image
                 src="/Door-Logo.jpg"
                 alt="Wonder Door Logo"
-                width={40}
-                height={40}
-                className="h-10 w-auto mr-3 object-contain"
+                width={56}
+                height={56}
+                className="h-10 sm:h-12 w-auto object-contain"
               />
-              <h1 className="text-xl font-bold text-gray-900">
-                Admin Dashboard
-              </h1>
             </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => router.push("/")}
-                className="flex items-center text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <Home className="w-5 h-5 mr-2" />
-                View Site
-              </button>
-              <button
-                onClick={handleLogout}
-                className="flex items-center text-brand-primary  transition-colors"
-              >
-                <LogOut className="w-5 h-5 mr-2" />
-                Logout
-              </button>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center text-brand-primary hover:text-brand-primary/80 transition-colors text-sm sm:text-base"
+            >
+              <LogOut className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+              Logout
+            </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-16">
         {/* Tabs - Desktop */}
         <div className="bg-white rounded-lg shadow mb-6 hidden md:block">
           <div className="border-b border-gray-200">

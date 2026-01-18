@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTranslate } from "@/lib/utils/useTranslate";
+import { useState, useEffect } from "react";
 
 type AboutData = {
   heroImage?: string;
@@ -19,7 +20,13 @@ export default function AboutClient({
   aboutData: AboutData | null;
 }) {
   const { lang } = useTranslate();
-  const currentLocale = lang || "en";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentLocale = mounted ? lang || "en" : "en";
 
   const heroImage = aboutData?.heroImage || "/about.jpg";
   const description = aboutData?.description

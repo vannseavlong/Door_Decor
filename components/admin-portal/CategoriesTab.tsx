@@ -4,6 +4,17 @@ import React, { useState } from "react";
 import { Plus, Edit2, Trash2, FolderTree, MoreVertical } from "lucide-react";
 import { Category } from "@/types";
 import { toast } from "sonner";
+import { Loading } from "@/components/ui/spinner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -25,13 +36,14 @@ import {
 export default function CategoriesTab() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   // Use React Query for caching
   const { data: categories = [], isLoading: loading } = useCategoriesQuery(
     async () => {
       const data = await getCategories();
       return data.map((d) => ({ ...d, id: d.id || "" })) as Category[];
-    }
+    },
   );
 
   const invalidateCategories = useInvalidateCategories();
@@ -47,14 +59,20 @@ export default function CategoriesTab() {
   };
 
   const handleDeleteCategory = async (categoryId: string) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
-      try {
-        await deleteCategory(categoryId);
-        invalidateCategories(); // Refresh cache
-        toast.success("Category deleted successfully");
-      } catch {
-        toast.error("Failed to delete category");
-      }
+    setDeleteId(categoryId);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      await deleteCategory(deleteId);
+      invalidateCategories(); // Refresh cache
+      toast.success("Category deleted successfully");
+      setDeleteId(null);
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+      toast.error("Failed to delete category");
     }
   };
 
@@ -69,14 +87,16 @@ export default function CategoriesTab() {
       description:
         typeof category.description === "string"
           ? { en: category.description, km: "" }
-          : category.description ?? { en: "", km: "" },
+          : (category.description ?? { en: "", km: "" }),
     };
 
     try {
       if (editingCategory) {
+        // Use firestoreId as the document ID
+        const docId = editingCategory.firestoreId || editingCategory.id;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, ...categoryData } = safeCategory; // Remove id from update data
-        await updateCategory(id, categoryData);
+        const { id, firestoreId, ...categoryData } = safeCategory; // Remove both id fields from update data
+        await updateCategory(docId, categoryData);
         toast.success("Category updated successfully");
       } else {
         await addCategory(safeCategory);
@@ -91,18 +111,20 @@ export default function CategoriesTab() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading text="Loading categories..." />;
 
   return (
     <>
       <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-900">Manage Categories</h2>
+        <div className="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+            Manage Categories
+          </h2>
           <button
             onClick={handleAddCategory}
-            className="bg-brand-primary text-white px-4 py-2 rounded-lg hover:bg-brand-primary/90 flex items-center transition-colors"
+            className="bg-brand-primary text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-brand-primary/90 flex items-center justify-center transition-colors text-sm sm:text-base"
           >
-            <Plus className="w-5 h-5 mr-2" />
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
             Add Category
           </button>
         </div>
@@ -123,19 +145,19 @@ export default function CategoriesTab() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
                     Name (English)
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
                     Name (Khmer)
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="hidden md:table-cell px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
                     Description (English)
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="hidden lg:table-cell px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
                     Description (Khmer)
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
                     Actions
                   </th>
                 </tr>
@@ -143,45 +165,55 @@ export default function CategoriesTab() {
               <tbody className="divide-y divide-gray-200">
                 {categories.map((category) => (
                   <tr key={category.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900">
                       {typeof category.name === "string"
                         ? category.name
                         : category.name?.en}
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900 font-khmer">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900 font-khmer">
                       {typeof category.name === "string"
                         ? "-"
                         : category.name?.km}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500">
                       {typeof category.description === "string"
                         ? category.description
                         : category.description?.en || "-"}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 font-khmer">
+                    <td className="hidden lg:table-cell px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 font-khmer">
                       {typeof category.description === "string"
                         ? "-"
                         : category.description?.km || "-"}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4">
                       <div className="flex items-center">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="p-1 rounded hover:bg-gray-100">
-                              <MoreVertical className="w-5 h-5 text-gray-600" />
+                              <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                             </button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuContent
+                            align="end"
+                            className="w-32 sm:w-40"
+                          >
                             <DropdownMenuItem
                               onSelect={() => handleEditCategory(category)}
+                              className="text-xs sm:text-sm"
                             >
-                              <Edit2 className="w-4 h-4 mr-2" /> Edit
+                              <Edit2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />{" "}
+                              Edit
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               variant="destructive"
-                              onSelect={() => handleDeleteCategory(category.id)}
+                              onSelect={() =>
+                                handleDeleteCategory(
+                                  category.firestoreId || category.id,
+                                )
+                              }
+                              className="text-xs sm:text-sm"
                             >
-                              <Trash2 className="w-4 h-4 mr-2 text-red-600" />{" "}
+                              <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-red-600" />{" "}
                               Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -206,6 +238,30 @@ export default function CategoriesTab() {
           }}
         />
       )}
+
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Category</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this category? This action cannot
+              be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
