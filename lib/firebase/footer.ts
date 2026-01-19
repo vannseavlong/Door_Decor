@@ -37,6 +37,6 @@ export const getFooterServer = unstable_cache(
 export async function updateFooterServer(data: FooterRecord) {
   const { revalidateTag } = await import("next/cache");
   await adminDb.collection(FOOTER).doc("main").set(data, { merge: true });
-  revalidateTag(CACHE_TAG_FOOTER); // Invalidate cache
+  revalidateTag(CACHE_TAG_FOOTER, "max"); // Invalidate cache
   return { ok: true };
 }

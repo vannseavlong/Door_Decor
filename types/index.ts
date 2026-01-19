@@ -16,6 +16,7 @@ export interface Product {
 
 export interface Category {
   id: string;
+  firestoreId?: string; // Firestore document ID (different from internal id)
   name: string | { en: string; km: string };
   description?: string | { en: string; km: string };
   createdAt: string;
