@@ -37,7 +37,7 @@ export async function updateHeroSectionServer(data: HeroSectionRecord) {
 
   const { revalidateTag } = await import("next/cache");
   await adminDb.collection(HERO_SECTION).doc("main").set(data, { merge: true });
-  revalidateTag(CACHE_TAG_HERO); // Invalidate cache
+  revalidateTag(CACHE_TAG_HERO, "max"); // Invalidate cache
   console.log("🔥 Firebase: Update complete!");
   return { ok: true };
 }

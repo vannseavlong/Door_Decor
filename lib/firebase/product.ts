@@ -85,7 +85,7 @@ export async function addProductServer(data: ProductRecord) {
     createdAt: now,
     updatedAt: now,
   });
-  revalidateTag(CACHE_TAG_PRODUCTS); // Invalidate cache
+  revalidateTag(CACHE_TAG_PRODUCTS, "max"); // Invalidate cache
   return { id: docRef.id };
 }
 
@@ -103,13 +103,13 @@ export async function updateProductServer(
       { ...updateData, updatedAt: new Date().toISOString() },
       { merge: true },
     );
-  revalidateTag(CACHE_TAG_PRODUCTS); // Invalidate cache
+  revalidateTag(CACHE_TAG_PRODUCTS, "max"); // Invalidate cache
   return { ok: true };
 }
 
 export async function deleteProductServer(id: string) {
   const { revalidateTag } = await import("next/cache");
   await adminDb.collection(PRODUCTS).doc(id).delete();
-  revalidateTag(CACHE_TAG_PRODUCTS); // Invalidate cache
+  revalidateTag(CACHE_TAG_PRODUCTS, "max"); // Invalidate cache
   return { ok: true };
 }

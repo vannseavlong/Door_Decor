@@ -51,7 +51,7 @@ export async function addInstallationServer(
   try {
     const { revalidateTag } = await import("next/cache");
     const docRef = await adminDb.collection(COLLECTION_NAME).add(data);
-    revalidateTag(CACHE_TAG_INSTALLATIONS); // Invalidate cache
+    revalidateTag(CACHE_TAG_INSTALLATIONS, "max"); // Invalidate cache
     return docRef.id;
   } catch (error) {
     console.error("Error adding installation:", error);
@@ -71,7 +71,7 @@ export async function updateInstallationServer(
       .collection(COLLECTION_NAME)
       .doc(id)
       .set(updateData, { merge: true });
-    revalidateTag(CACHE_TAG_INSTALLATIONS); // Invalidate cache
+    revalidateTag(CACHE_TAG_INSTALLATIONS, "max"); // Invalidate cache
   } catch (error) {
     console.error("Error updating installation:", error);
     throw error;
@@ -82,7 +82,7 @@ export async function deleteInstallationServer(id: string) {
   try {
     const { revalidateTag } = await import("next/cache");
     await adminDb.collection(COLLECTION_NAME).doc(id).delete();
-    revalidateTag(CACHE_TAG_INSTALLATIONS); // Invalidate cache
+    revalidateTag(CACHE_TAG_INSTALLATIONS, "max"); // Invalidate cache
   } catch (error) {
     console.error("Error deleting installation:", error);
     throw error;

@@ -42,7 +42,7 @@ export async function updateAboutDataServer(data: AboutDataRecord) {
       .collection(ABOUT_COLLECTION)
       .doc(ABOUT_DOC_ID)
       .set(data, { merge: true });
-    revalidateTag(CACHE_TAG_ABOUT); // Invalidate cache
+    revalidateTag(CACHE_TAG_ABOUT, "max"); // Invalidate cache
     return { ok: true };
   } catch (error) {
     console.error("Error updating about data:", error);

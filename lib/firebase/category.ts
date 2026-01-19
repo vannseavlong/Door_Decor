@@ -66,7 +66,7 @@ export async function addCategoryServer(data: CategoryRecord) {
     createdAt: now,
     updatedAt: now,
   });
-  revalidateTag(CACHE_TAG_CATEGORIES); // Invalidate cache
+  revalidateTag(CACHE_TAG_CATEGORIES, "max"); // Invalidate cache
   return { id: docRef.id };
 }
 
@@ -84,13 +84,13 @@ export async function updateCategoryServer(
       { ...updateData, updatedAt: new Date().toISOString() },
       { merge: true },
     );
-  revalidateTag(CACHE_TAG_CATEGORIES); // Invalidate cache
+  revalidateTag(CACHE_TAG_CATEGORIES, "max"); // Invalidate cache
   return { ok: true };
 }
 
 export async function deleteCategoryServer(id: string) {
   const { revalidateTag } = await import("next/cache");
   await adminDb.collection(CATEGORIES).doc(id).delete();
-  revalidateTag(CACHE_TAG_CATEGORIES); // Invalidate cache
+  revalidateTag(CACHE_TAG_CATEGORIES, "max"); // Invalidate cache
   return { ok: true };
 }
