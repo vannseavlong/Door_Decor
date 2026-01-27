@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-// import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
 // import { motion } from "framer-motion";
 import { MapPin, Calendar } from "lucide-react";
@@ -105,12 +105,15 @@ export default function Blog({
 
         {/* Featured Grid - Masonry Style */}
         <div className="grid md:grid-cols-2 gap-8 mb-6">
-          {featuredPosts.map((post, index) => (
-            <div
-              key={post.id}
-              className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
-              style={{ height: index === 0 ? "500px" : "500px" }}
-            >
+          {featuredPosts.map((post, index) => {
+            const wrapperClasses =
+              "group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer";
+            const content = (
+              <div
+                key={post.id}
+                className={wrapperClasses}
+                style={{ height: index === 0 ? "500px" : "500px" }}
+              >
               <Image
                 src={post.image}
                 alt={post.title}
@@ -144,55 +147,88 @@ export default function Blog({
                   )}
                 </div>
               </div>
-            </div>
-          ))}
+              </div>
+            );
+
+            if (post.href) {
+              const isInternal = post.href.startsWith("/");
+              return isInternal ? (
+                <Link key={post.id} href={post.href} className="block">
+                  {content}
+                </Link>
+              ) : (
+                <a key={post.id} href={post.href} className="block">
+                  {content}
+                </a>
+              );
+            }
+
+            return content;
+          })}
         </div>
 
         {/* Regular Posts - Different Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          {regularPosts.map((post) => (
-            <div
-              key={post.id}
-              className="group bg-white rounded-xl overflow-hidden border border-black-300 transition-all duration-300 cursor-pointer"
-            >
-              <div className="relative h-80 overflow-hidden">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  quality={100}
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 rounded-full">
-                    {post.category || post.tag}
-                  </span>
+          {regularPosts.map((post) => {
+            const card = (
+              <div
+                key={post.id}
+                className="group bg-white rounded-xl overflow-hidden border border-black-300 transition-all duration-300 cursor-pointer"
+              >
+                <div className="relative h-80 overflow-hidden">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    quality={100}
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 rounded-full">
+                      {post.category || post.tag}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="heading-5 mb-2 group-hover:text-brand-primary transition-colors font-khmer">
+                    {getLocalizedText(post, "title")}
+                  </h3>
+                  <p className="body-base text-gray-600 mb-4 line-clamp-2 font-khmer">
+                    {getLocalizedText(post, "description")}
+                  </p>
+                  <div className="flex flex-col gap-2 text-gray-500">
+                    {post.location && (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        <span className="font-khmer">{post.location}</span>
+                      </div>
+                    )}
+                    {post.date && (
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        <span className="font-khmer">{post.date}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="heading-5 mb-2 group-hover:text-brand-primary transition-colors font-khmer">
-                  {getLocalizedText(post, "title")}
-                </h3>
-                <p className="body-base text-gray-600 mb-4 line-clamp-2 font-khmer">
-                  {getLocalizedText(post, "description")}
-                </p>
-                <div className="flex flex-col gap-2 text-gray-500">
-                  {post.location && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
-                      <span className="font-khmer">{post.location}</span>
-                    </div>
-                  )}
-                  {post.date && (
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span className="font-khmer">{post.date}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+
+            if (post.href) {
+              const isInternal = post.href.startsWith("/");
+              return isInternal ? (
+                <Link key={post.id} href={post.href} className="block">
+                  {card}
+                </Link>
+              ) : (
+                <a key={post.id} href={post.href} className="block">
+                  {card}
+                </a>
+              );
+            }
+
+            return card;
+          })}
         </div>
 
         {/* View All Button */}

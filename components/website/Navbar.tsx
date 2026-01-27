@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import LanguageSwitcher from "@/components/website/LanguageSwitcher";
 import ContactButton from "@/components/website/ContactButton";
 import { useTranslate } from "@/lib/utils/useTranslate";
@@ -15,6 +16,7 @@ type NavbarProps = {
 const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
   const { t, lang } = useTranslate();
   const currentLocale = lang || "en";
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [productOpen, setProductOpen] = useState(false);
   const productRef = useRef<HTMLDivElement | null>(null);
@@ -72,8 +74,18 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
 
             <nav className="hidden md:flex items-center gap-6 ml-6">
               <Link
+                href="/"
+                className={`body-base font-medium transition-colors font-khmer ${
+                  pathname === "/" ? "text-brand-primary" : "text-brand-dark hover-brand-primary"
+                }`}
+              >
+                {t("navHome")}
+              </Link>
+              <Link
                 href="/about"
-                className="body-base font-medium text-brand-dark hover-brand-primary transition-colors font-khmer"
+                className={`body-base font-medium transition-colors font-khmer ${
+                  pathname === "/about" ? "text-brand-primary" : "text-brand-dark hover-brand-primary"
+                }`}
               >
                 {t("navAboutUs")}
               </Link>
@@ -84,7 +96,9 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
                   onClick={() => setProductOpen((s) => !s)}
                   aria-haspopup="menu"
                   aria-expanded={productOpen}
-                  className="body-base font-medium text-brand-dark hover-brand-primary flex items-center gap-2 transition-colors font-khmer"
+                  className={`body-base font-medium flex items-center gap-2 transition-colors font-khmer ${
+                    pathname?.startsWith("/product") ? "text-brand-primary" : "text-brand-dark hover-brand-primary"
+                  }`}
                 >
                   <span>{t("navProduct")}</span>
                   <svg
@@ -226,8 +240,20 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
           <ul className="flex flex-col gap-3">
             <li>
               <Link
+                href="/"
+                className={`body-base font-khmer ${
+                  pathname === "/" ? "text-brand-primary" : "text-brand-dark"
+                }`}
+              >
+                {t("navHome")}
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/about"
-                className="body-base text-brand-dark font-khmer"
+                className={`body-base font-khmer ${
+                  pathname === "/about" ? "text-brand-primary" : "text-brand-dark"
+                }`}
               >
                 {t("navAboutUs")}
               </Link>
@@ -235,7 +261,9 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
 
             <li>
               <details className="group">
-                <summary className="body-base text-brand-dark flex items-center justify-between cursor-pointer font-khmer">
+                <summary className={`body-base flex items-center justify-between cursor-pointer font-khmer ${
+                  pathname?.startsWith("/product") ? "text-brand-primary" : "text-brand-dark"
+                }`}>
                   {t("navProduct")}
                   <svg
                     width="16"
