@@ -55,8 +55,27 @@ export default function ProductsSection({ products, categories }: Props) {
   const { t, lang } = useTranslate();
   const [mounted, setMounted] = useState(false);
 
+  // max items to show per category depending on viewport
+  const [maxItems, setMaxItems] = useState<number>(6);
+
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  // update `maxItems` based on viewport width: desktop => 6, tablet/mobile => 3
+  useEffect(() => {
+    const updateMaxItems = () => {
+      try {
+        const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+        setMaxItems(isDesktop ? 6 : 3);
+      } catch (e) {
+        setMaxItems(6);
+      }
+    };
+
+    updateMaxItems();
+    window.addEventListener("resize", updateMaxItems);
+    return () => window.removeEventListener("resize", updateMaxItems);
   }, []);
 
   const currentLocale = mounted ? lang || "en" : "en";
@@ -274,18 +293,20 @@ export default function ProductsSection({ products, categories }: Props) {
                   whileInView="visible"
                   viewport={{ once: true, margin: "-50px" }}
                 >
-                  {grouped[cat.id!].map((p, idx) => (
-                    <motion.div
-                      key={p.id ?? `${cat.id}-${idx}`}
-                      variants={itemVariants}
-                    >
-                      <Card
-                        src={p.imageUrl ?? IMGS[idx % IMGS.length]}
-                        title={getProductName(p as ProductRecord)}
-                        id={p.id}
-                      />
-                    </motion.div>
-                  ))}
+                  {grouped[cat.id!]
+                    .slice(0, maxItems)
+                    .map((p, idx) => (
+                      <motion.div
+                        key={p.id ?? `${cat.id}-${idx}`}
+                        variants={itemVariants}
+                      >
+                        <Card
+                          src={p.imageUrl ?? IMGS[idx % IMGS.length]}
+                          title={getProductName(p as ProductRecord)}
+                          id={p.id}
+                        />
+                      </motion.div>
+                    ))}
                 </motion.div>
               </motion.div>
             );
