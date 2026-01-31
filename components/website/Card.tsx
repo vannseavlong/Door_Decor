@@ -4,6 +4,8 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useTranslate } from "@/lib/utils/useTranslate";
+import { localizePath } from "@/lib/utils/localizePath";
 import { Eye } from "lucide-react";
 
 type CardProps = {
@@ -26,7 +28,12 @@ export default function Card({
   id,
   href,
 }: CardProps) {
-  const link = href ? href : id ? `/product/${id}` : undefined;
+  const { lang } = useTranslate();
+  const link = href
+    ? localizePath(href, lang)
+    : id
+    ? localizePath(`/product/${id}`, lang)
+    : undefined;
   const [viewCount, setViewCount] = useState(0);
 
   useEffect(() => {

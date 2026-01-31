@@ -4,6 +4,7 @@ import ProductInfoActions from "@/components/product/ProductInfoActions";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import { ProductRouteParams } from "@/types/product";
 import { getProductsServer, ProductRecord } from "@/lib/firebase/product";
+import { localizePath } from "@/lib/utils/localizePath";
 
 // Enable ISR - revalidate every 120 seconds (2 minutes)
 export const revalidate = 120;
@@ -35,7 +36,7 @@ export default async function ProductPage({ params }: Props) {
         </p>
         <div className="mt-4">
           <Link
-            href="/"
+            href={localizePath("/", (resolvedParams as any)?.lang)}
             className="text-brand-primary hover:text-brand-secondary underline transition-colors"
           >
             Back to home

@@ -52,7 +52,7 @@ export default function CategoryClient({ category, products, slug }: Props) {
           </div>
           <div>
             <Link
-              href="/"
+              href={`/${currentLocale}`}
               className={`body-sm text-brand-primary hover:underline transition-colors ${
                 currentLocale === "kh" ? "font-khmer" : ""
               }`}

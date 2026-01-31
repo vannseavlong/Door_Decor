@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useTranslate } from "@/lib/utils/useTranslate";
+import { localizePath } from "@/lib/utils/localizePath";
 
 interface ContactButtonProps {
   href?: string;
@@ -12,14 +13,15 @@ interface ContactButtonProps {
 }
 
 export default function ContactButton({
-  href = "/contact",
+  href,
   className = "",
   onClick,
   text,
   hoverText,
 }: ContactButtonProps) {
   const { t, lang } = useTranslate();
-  const currentLocale = lang || "en";
+  const currentLocale = lang || "kh";
+  const localizedHref = localizePath(href || "/contact", currentLocale);
 
   const displayText = text || t("contactUs");
   const displayHoverText = hoverText || t("getInTouch");
@@ -55,7 +57,7 @@ export default function ContactButton({
     // Safe navigation fallback
     try {
       if (typeof window !== "undefined") {
-        window.location.href = href || "/contact";
+        window.location.href = localizedHref;
       }
     } catch {
       // ignore
@@ -64,7 +66,7 @@ export default function ContactButton({
 
   return (
     <a
-      href={href}
+      href={localizedHref}
       onClick={onClick ? onClick : handleClick}
       className={`group inline-flex items-center justify-center leading-7 px-4 py-2 bg-brand-primary text-white border border-transparent hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary transition-all body-base font-medium font-khmer ${className}`}
     >

@@ -9,6 +9,7 @@ import dummyProducts, {
   CATEGORIES as DUMMY_CATEGORIES,
 } from "@/data/data-dummy";
 import { useTranslate } from "@/lib/utils/useTranslate";
+import { localizePath } from "@/lib/utils/localizePath";
 import { CategoryRecord } from "@/lib/firebase/category";
 import { ProductRecord } from "@/lib/firebase/product";
 
@@ -53,13 +54,28 @@ const itemVariants = {
 
 export default function ProductsSection({ products, categories }: Props) {
   const { t, lang } = useTranslate();
-  const [mounted, setMounted] = useState(false);
 
+  // max items to show per category depending on viewport
+  const [maxItems, setMaxItems] = useState<number>(6);
+
+
+  // update `maxItems` based on viewport width: desktop => 6, tablet/mobile => 3
   useEffect(() => {
-    setMounted(true);
+    const updateMaxItems = () => {
+      try {
+        const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+        setMaxItems(isDesktop ? 6 : 3);
+      } catch (e) {
+        setMaxItems(6);
+      }
+    };
+
+    updateMaxItems();
+    window.addEventListener("resize", updateMaxItems);
+    return () => window.removeEventListener("resize", updateMaxItems);
   }, []);
 
-  const currentLocale = mounted ? lang || "en" : "en";
+  const currentLocale = lang || "kh";
 
   console.log("🎨 ProductsSection - Received products:", products);
   console.log("🎨 ProductsSection - Products length:", products?.length || 0);
@@ -224,7 +240,7 @@ export default function ProductsSection({ products, categories }: Props) {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="heading-2 text-brand-dark font-khmer">
+          <h2 className="heading-3 md:heading-2 text-brand-dark font-khmer">
             {t("productTitle")}
           </h2>
           {/* <p
@@ -239,6 +255,7 @@ export default function ProductsSection({ products, categories }: Props) {
           {finalCategories.map((cat, catIndex) => {
             const categoryName = getCategoryName(cat);
             const categorySlug = slugify(categoryName);
+            const isLastCategory = catIndex === finalCategories.length - 1;
 
             return (
               <motion.div
@@ -250,14 +267,14 @@ export default function ProductsSection({ products, categories }: Props) {
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3
-                    className={`heading-3 text-brand-dark ${
+                    className={`heading-4 md:heading-3 text-brand-dark ${
                       currentLocale === "kh" ? "font-khmer" : ""
                     }`}
                   >
                     {categoryName}
                   </h3>
                   <Link
-                    href={`/products/category/${categorySlug}`}
+                    href={localizePath(`/products/category/${categorySlug}`, currentLocale)}
                     className={`body-sm text-brand-primary hover:text-brand-primary/90 hover:underline transition-colors ${
                       currentLocale === "kh" ? "font-khmer" : ""
                     }`}
@@ -274,19 +291,25 @@ export default function ProductsSection({ products, categories }: Props) {
                   whileInView="visible"
                   viewport={{ once: true, margin: "-50px" }}
                 >
-                  {grouped[cat.id!].map((p, idx) => (
-                    <motion.div
-                      key={p.id ?? `${cat.id}-${idx}`}
-                      variants={itemVariants}
-                    >
-                      <Card
-                        src={p.imageUrl ?? IMGS[idx % IMGS.length]}
-                        title={getProductName(p as ProductRecord)}
-                        id={p.id}
-                      />
-                    </motion.div>
-                  ))}
+                  {grouped[cat.id!]
+                    .slice(0, maxItems)
+                    .map((p, idx) => (
+                      <motion.div
+                        key={p.id ?? `${cat.id}-${idx}`}
+                        variants={itemVariants}
+                      >
+                        <Card
+                          src={p.imageUrl ?? IMGS[idx % IMGS.length]}
+                          title={getProductName(p as ProductRecord)}
+                          id={p.id}
+                        />
+                      </motion.div>
+                    ))}
                 </motion.div>
+
+                {!isLastCategory && (
+                  <hr className="mt-10 border-t border-gray-200" />
+                )}
               </motion.div>
             );
           })}
@@ -295,3 +318,5 @@ export default function ProductsSection({ products, categories }: Props) {
     </section>
   );
 }
+
+

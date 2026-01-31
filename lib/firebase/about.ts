@@ -5,13 +5,29 @@ const ABOUT_COLLECTION = "about";
 const ABOUT_DOC_ID = "main";
 const CACHE_TAG_ABOUT = "about-data";
 
+export type CoreValue = {
+  id: string;
+  icon: string; // SVG path or icon name
+  title: {
+    en: string;
+    km: string;
+  };
+  description: {
+    en: string;
+    km: string;
+  };
+};
+
 export type AboutDataRecord = {
-  heroImage: string;
+  heroImage?: string; // legacy field
+  aboutLandscape?: string;
+  aboutPortrait?: string;
   description: {
     en: string;
     km: string;
   };
   additionalImage: string;
+  coreValues?: CoreValue[];
 };
 
 export const getAboutDataServer = unstable_cache(

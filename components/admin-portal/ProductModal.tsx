@@ -29,6 +29,7 @@ interface ProductModalProps {
   categories: Category[];
   onSave: (product: Product) => void;
   onClose: () => void;
+  onUpdateProductCode?: (productId: string, productCode: { [key: string]: { en: string; km: string } }) => Promise<void>;
 }
 
 export default function ProductModal({
@@ -36,6 +37,7 @@ export default function ProductModal({
   categories,
   onSave,
   onClose,
+  onUpdateProductCode,
 }: ProductModalProps) {
   const [formData, setFormData] = useState<{
     code: string;
@@ -107,10 +109,21 @@ export default function ProductModal({
     }
   };
 
-  const handleRemoveSpec = (key: string) => {
+  const handleRemoveSpec = async (key: string) => {
     const newSpecs = { ...formData.productCode };
     delete newSpecs[key];
     setFormData({ ...formData, productCode: newSpecs });
+
+    // If editing an existing product, immediately save the change to Firebase
+    if (product?.id && onUpdateProductCode) {
+      try {
+        await onUpdateProductCode(product.id, newSpecs);
+      } catch (error) {
+        console.error("Failed to delete product code:", error);
+        // Revert the local state if save failed
+        setFormData({ ...formData, productCode: { ...formData.productCode } });
+      }
+    }
   };
 
   return (

@@ -111,6 +111,25 @@ export default function ProductsTab() {
     }
   };
 
+  const handleUpdateProductCode = async (
+    productId: string,
+    productCode: { [key: string]: { en: string; km: string } }
+  ) => {
+    try {
+      await updateProduct(productId, { productCode });
+      // Refresh products from server to get the latest data
+      const productsData = await getProducts();
+      setProducts(
+        productsData.map((p) => ({ ...p, id: p.id || "" })) as Product[]
+      );
+      toast.success("Product code deleted successfully");
+    } catch (error) {
+      console.error("Error updating product code:", error);
+      toast.error("Failed to delete product code");
+      throw error; // Re-throw to let the modal know the save failed
+    }
+  };
+
   const handleSaveProduct = async (product: Product) => {
     // Ensure name/description are always { en, km }
     const safeProduct = {
@@ -368,6 +387,7 @@ export default function ProductsTab() {
             setShowModal(false);
             setEditingProduct(null);
           }}
+          onUpdateProductCode={handleUpdateProductCode}
         />
       )}
 

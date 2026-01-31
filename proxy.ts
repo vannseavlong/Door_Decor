@@ -4,17 +4,20 @@ import type { NextRequest } from "next/server";
 const LANGS = ["en", "kh"];
 
 export function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const { pathname, search } = req.nextUrl;
   const parts = pathname.split("/");
   const first = parts[1];
 
-  if (LANGS.includes(first)) {
-    const newPath = "/" + parts.slice(2).join("/");
-    const url = req.nextUrl.clone();
-    url.pathname = newPath === "/" ? "/" : newPath;
+  // Redirect root to default locale '/kh'
+  if (pathname === "/") {
+    const url = new URL("/kh", req.url);
+    return NextResponse.redirect(url);
+  }
 
-    const res = NextResponse.rewrite(url);
-    // set a cookie so client can read locale
+  if (LANGS.includes(first)) {
+    // Keep the locale segment and let Next.js handle the route.
+    // Only set the `NEXT_LOCALE` cookie so client code can read it.
+    const res = NextResponse.next();
     res.cookies.set("NEXT_LOCALE", first, { path: "/" });
     return res;
   }
@@ -23,5 +26,8 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/:lang(en|kh)(/:path*)?"],
+  matcher: ["/", "/en/:path*", "/kh/:path*", "/en", "/kh"],
 };
+
+// Next.js expects an exported `middleware` function. Export alias for compatibility.
+export const middleware = proxy;

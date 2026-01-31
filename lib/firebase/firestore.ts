@@ -28,6 +28,13 @@ export async function createProductServer(data: ProductRecord) {
     ...data,
     createdAt: data.createdAt || Date.now(),
   });
+  // Invalidate Next.js ISR cache for products so website fetches latest data
+  try {
+    const { revalidateTag } = await import("next/cache");
+    revalidateTag("products-list", "max");
+  } catch (e) {
+    // ignore if revalidateTag not available in this environment
+  }
   return { id: docRef.id };
 }
 
@@ -36,10 +43,22 @@ export async function updateProductServer(
   data: Partial<ProductRecord>
 ) {
   await adminDb.collection(PRODUCTS).doc(id).set(data, { merge: true });
+  try {
+    const { revalidateTag } = await import("next/cache");
+    revalidateTag("products-list", "max");
+  } catch (e) {
+    // ignore if revalidateTag not available in this environment
+  }
   return { ok: true };
 }
 
 export async function deleteProductServer(id: string) {
   await adminDb.collection(PRODUCTS).doc(id).delete();
+  try {
+    const { revalidateTag } = await import("next/cache");
+    revalidateTag("products-list", "max");
+  } catch (e) {
+    // ignore if revalidateTag not available in this environment
+  }
   return { ok: true };
 }
