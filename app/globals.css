@@ -250,7 +250,7 @@
   }
 
   .heading-3 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: var(--font-semibold);
     line-height: var(--leading-snug);
   }
@@ -263,11 +263,11 @@
 
   @media (min-width: 768px) {
     .heading-3 {
-      font-size: 1.125rem;
+      font-size: 1.375rem;
     }
 
     .heading-2 {
-      font-size: 1.75rem;
+      font-size: 2rem;
     }
 
     .heading-4 {

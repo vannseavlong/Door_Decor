@@ -111,13 +111,13 @@ export default function NewContactUs({
     <section className="w-full py-12 md:py-16 flex flex-col items-center justify-center">
       <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
         <motion.h2
-          className="heading-2 text-brand-dark font-khmer mb-8 text-center"
+          className="heading-3 text-brand-dark font-khmer mb-8 text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          Get in Touch
+          {t("getInTouch")}
         </motion.h2>
         <motion.div
           className="flex flex-row gap-6 md:gap-32 lg:gap-64 justify-center items-center mb-8 w-full"

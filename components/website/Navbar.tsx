@@ -7,16 +7,30 @@ import { usePathname } from "next/navigation";
 import LanguageSwitcher from "@/components/website/LanguageSwitcher";
 import ContactButton from "@/components/website/ContactButton";
 import { useTranslate } from "@/lib/utils/useTranslate";
+import { localizePath } from "@/lib/utils/localizePath";
 import { CategoryRecord } from "@/lib/firebase/category";
 
 type NavbarProps = {
   categories?: CategoryRecord[];
 };
 
+const SUPPORTED_LOCALES = ["en", "kh"];
+
 const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
   const { t, lang } = useTranslate();
   const currentLocale = lang || "en";
   const pathname = usePathname();
+
+  // Strip locale prefix from pathname for route matching
+  const getPathWithoutLocale = (path: string) => {
+    const segments = path.split("/").filter(Boolean);
+    if (segments.length > 0 && SUPPORTED_LOCALES.includes(segments[0])) {
+      return "/" + segments.slice(1).join("/") || "/";
+    }
+    return path;
+  };
+
+  const pathWithoutLocale = getPathWithoutLocale(pathname);
   const [open, setOpen] = useState(false);
   const [productOpen, setProductOpen] = useState(false);
   const productRef = useRef<HTMLDivElement | null>(null);
@@ -61,7 +75,7 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
       <div className="mx-auto px-4" style={{ maxWidth: 1440 }}>
         <div className="flex items-center justify-between h-20 md:h-24">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-3">
+            <Link href={localizePath("/", currentLocale)} className="flex items-center gap-3">
               <Image
                 src="/Door-Logo.jpg"
                 alt="logo"
@@ -74,17 +88,17 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
 
             <nav className="hidden md:flex items-center gap-6 ml-6">
               <Link
-                href="/"
+                href={localizePath("/", currentLocale)}
                 className={`body-base font-medium transition-colors font-khmer ${
-                  pathname === "/" ? "text-brand-primary" : "text-brand-dark hover-brand-primary"
+                  pathWithoutLocale === "/" ? "text-brand-primary" : "text-brand-dark hover-brand-primary"
                 }`}
               >
                 {t("navHome")}
               </Link>
               <Link
-                href="/about"
+                href={localizePath("/about", currentLocale)}
                 className={`body-base font-medium transition-colors font-khmer ${
-                  pathname === "/about" ? "text-brand-primary" : "text-brand-dark hover-brand-primary"
+                  pathWithoutLocale === "/about" ? "text-brand-primary" : "text-brand-dark hover-brand-primary"
                 }`}
               >
                 {t("navAboutUs")}
@@ -97,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
                   aria-haspopup="menu"
                   aria-expanded={productOpen}
                   className={`body-base font-medium flex items-center gap-2 transition-colors font-khmer ${
-                    pathname?.startsWith("/product") ? "text-brand-primary" : "text-brand-dark hover-brand-primary"
+                    pathWithoutLocale?.startsWith("/product") ? "text-brand-primary" : "text-brand-dark hover-brand-primary"
                   }`}
                 >
                   <span>{t("navProduct")}</span>
@@ -134,9 +148,12 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
                       categories.map((cat) => (
                         <li key={cat.id} role="none">
                           <Link
-                            href={`/products/category/${slugify(
-                              getCategoryName(cat.name)
-                            )}`}
+                            href={localizePath(
+                              `/products/category/${slugify(
+                                getCategoryName(cat.name)
+                              )}`,
+                              currentLocale
+                            )}
                             role="menuitem"
                             tabIndex={productOpen ? 0 : -1}
                             onClick={() => setProductOpen(false)}
@@ -240,9 +257,9 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
           <ul className="flex flex-col gap-3">
             <li>
               <Link
-                href="/"
+                href={localizePath("/", currentLocale)}
                 className={`body-base font-khmer ${
-                  pathname === "/" ? "text-brand-primary" : "text-brand-dark"
+                  pathWithoutLocale === "/" ? "text-brand-primary" : "text-brand-dark"
                 }`}
               >
                 {t("navHome")}
@@ -250,9 +267,9 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
             </li>
             <li>
               <Link
-                href="/about"
+                href={localizePath("/about", currentLocale)}
                 className={`body-base font-khmer ${
-                  pathname === "/about" ? "text-brand-primary" : "text-brand-dark"
+                  pathWithoutLocale === "/about" ? "text-brand-primary" : "text-brand-dark"
                 }`}
               >
                 {t("navAboutUs")}
@@ -262,7 +279,7 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
             <li>
               <details className="group">
                 <summary className={`body-base flex items-center justify-between cursor-pointer font-khmer ${
-                  pathname?.startsWith("/product") ? "text-brand-primary" : "text-brand-dark"
+                  pathWithoutLocale?.startsWith("/product") ? "text-brand-primary" : "text-brand-dark"
                 }`}>
                   {t("navProduct")}
                   <svg
@@ -284,7 +301,7 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
                 <ul className="mt-2 pl-4 flex flex-col gap-2">
                   <li>
                     <Link
-                      href="/product"
+                      href={localizePath("/product", currentLocale)}
                       className="block py-2 body-sm text-brand-dark hover-brand-primary font-khmer"
                     >
                       {t("navAllProducts")}
@@ -293,9 +310,12 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
                   {categories.map((cat) => (
                     <li key={cat.id}>
                       <Link
-                        href={`/products/category/${slugify(
-                          getCategoryName(cat.name)
-                        )}`}
+                        href={localizePath(
+                          `/products/category/${slugify(
+                            getCategoryName(cat.name)
+                          )}`,
+                          currentLocale
+                        )}
                         className="block py-2 body-sm text-brand-dark hover-brand-primary font-khmer"
                       >
                         {getCategoryName(cat.name)}

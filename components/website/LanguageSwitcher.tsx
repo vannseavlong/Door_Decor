@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslate } from "@/lib/utils/useTranslate";
 
 const OPTIONS: { code: string; label: string; flagSrc: string }[] = [
@@ -9,9 +10,41 @@ const OPTIONS: { code: string; label: string; flagSrc: string }[] = [
   { code: "kh", label: "ខ្មែរ", flagSrc: "/flags/KmFlag.webp" },
 ];
 
+const SUPPORTED_LOCALES = ["en", "kh"];
+
 export default function LanguageSwitcher() {
   const { lang, setLang } = useTranslate();
   const detailsRef = useRef<HTMLDetailsElement | null>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Switch language and navigate to the new localized route
+  const handleLanguageChange = (newLang: string) => {
+    // Update global state
+    setLang(newLang);
+
+    // Close dropdown
+    try {
+      if (detailsRef.current) detailsRef.current.open = false;
+    } catch {
+      /* ignore */
+    }
+
+    // Build new path with the new language prefix
+    const segments = pathname.split("/").filter(Boolean);
+
+    // Check if first segment is a locale
+    if (segments.length > 0 && SUPPORTED_LOCALES.includes(segments[0])) {
+      // Replace the existing locale
+      segments[0] = newLang;
+    } else {
+      // No locale in path, prepend the new one
+      segments.unshift(newLang);
+    }
+
+    const newPath = "/" + segments.join("/");
+    router.push(newPath);
+  };
 
   return (
     <div className="relative inline-block text-left w-full md:w-auto">
@@ -51,20 +84,7 @@ export default function LanguageSwitcher() {
             <button
               key={opt.code}
               type="button"
-              onClick={() => {
-                // update local state
-                setLang(opt.code);
-
-                // close dropdown
-                try {
-                  if (detailsRef.current) detailsRef.current.open = false;
-                } catch {
-                  /* ignore */
-                }
-
-                // No navigation needed - language state is global
-                // The page will re-render with new language automatically
-              }}
+              onClick={() => handleLanguageChange(opt.code)}
               className="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-center gap-3"
             >
               <Image

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useTranslate } from "@/lib/utils/useTranslate";
+import { localizePath } from "@/lib/utils/localizePath";
 
 type FooterData = {
   companyDescription?: { en: string; km: string };
@@ -81,20 +82,20 @@ export default function Footer({ footerData, categories = [] }: FooterProps) {
               {t("quickLinks")}
             </h4>
             <ul className="space-y-2 body-sm">
-              {categories.slice(0, 3).map((cat) => {
+              {categories.map((cat) => {
                 const categoryName = getCategoryName(cat.name);
                 const categorySlug = slugify(categoryName);
                 return (
                   <li key={cat.id}>
-                    <Link
-                      href={`/products/category/${categorySlug}`}
-                      className={`text-white/90 hover:underline ${
-                        currentLocale === "kh" ? "font-khmer" : ""
-                      }`}
-                    >
-                      {categoryName}
-                    </Link>
-                  </li>
+                      <Link
+                        href={localizePath(`/products/category/${categorySlug}`, currentLocale)}
+                        className={`text-white/90 hover:underline ${
+                          currentLocale === "kh" ? "font-khmer" : ""
+                        }`}
+                      >
+                        {categoryName}
+                      </Link>
+                    </li>
                 );
               })}
             </ul>
