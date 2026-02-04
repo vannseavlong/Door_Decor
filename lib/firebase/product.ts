@@ -5,15 +5,28 @@ import { unstable_cache } from "next/cache";
 const PRODUCTS = "products";
 const CACHE_TAG_PRODUCTS = "products-list";
 
+export type LocalizedText = {
+  en: string;
+  km: string;
+};
+
+export type ProductCodeValue = {
+  label: LocalizedText;
+  value: LocalizedText;
+};
+
+// Legacy format support
+export type LegacyProductCodeValue = LocalizedText;
+
 export type ProductRecord = {
   id?: string;
   code?: string; // Product code for display
-  name: { en: string; km: string };
-  description: { en: string; km: string };
+  name: LocalizedText;
+  description: LocalizedText;
   price: string;
   categoryId: string;
   imageUrl: string; // Single image only
-  productCode: { [key: string]: { en: string; km: string } };
+  productCode?: { [key: string]: ProductCodeValue | LegacyProductCodeValue };
   createdAt?: string;
   updatedAt?: string;
 };
