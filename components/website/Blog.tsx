@@ -112,9 +112,7 @@ export default function Blog({
             return (
               <div
                 key={post.id}
-                className={`${wrapperClasses} ${
-                  index === 0 ? "h-80 md:h-[500px]" : "h-64 md:h-[420px]"
-                }`}
+                className={`${wrapperClasses} h-80 md:h-[500px]`}
               >
                 <Image
                   src={post.image}
