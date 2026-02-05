@@ -21,6 +21,9 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
   const currentLocale = lang || "en";
   const pathname = usePathname();
 
+  // Sort categories by sortOrder
+  const sortedCategories = [...categories].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+
   // Strip locale prefix from pathname for route matching
   const getPathWithoutLocale = (path: string) => {
     const segments = path.split("/").filter(Boolean);
@@ -144,8 +147,8 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
                   }`}
                 >
                   <ul className="py-2" role="none">
-                    {categories.length > 0 ? (
-                      categories.map((cat) => (
+                    {sortedCategories.length > 0 ? (
+                      sortedCategories.map((cat) => (
                         <li key={cat.id} role="none">
                           <Link
                             href={localizePath(
@@ -307,7 +310,7 @@ const Navbar: React.FC<NavbarProps> = ({ categories = [] }) => {
                       {t("navAllProducts")}
                     </Link>
                   </li>
-                  {categories.map((cat) => (
+                  {sortedCategories.map((cat) => (
                     <li key={cat.id}>
                       <Link
                         href={localizePath(

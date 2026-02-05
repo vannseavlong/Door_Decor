@@ -19,6 +19,7 @@ export interface Category {
   firestoreId?: string; // Firestore document ID (different from internal id)
   name: string | { en: string; km: string };
   description?: string | { en: string; km: string };
+  sortOrder: number; // Order for displaying categories
   createdAt: string;
   updatedAt: string;
 }

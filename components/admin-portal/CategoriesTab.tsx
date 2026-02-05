@@ -1,10 +1,27 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Edit2, Trash2, FolderTree, MoreVertical } from "lucide-react";
+import { Plus, Edit2, Trash2, FolderTree, MoreVertical, GripVertical } from "lucide-react";
 import { Category } from "@/types";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/spinner";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +50,97 @@ import {
   useInvalidateCategories,
 } from "@/lib/react-query/useFirebaseQuery";
 
+// Sortable row component
+function SortableRow({ category, onEdit, onDelete }: { 
+  category: Category;
+  onEdit: (category: Category) => void;
+  onDelete: (id: string) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <tr 
+      ref={setNodeRef} 
+      style={style} 
+      className={`hover:bg-gray-50 ${isDragging ? 'bg-gray-100' : ''}`}
+    >
+      <td className="px-3 sm:px-6 py-3 sm:py-4">
+        <button 
+          className="cursor-grab active:cursor-grabbing touch-none"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+        </button>
+      </td>
+      <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900">
+        {typeof category.name === "string"
+          ? category.name
+          : category.name?.en}
+      </td>
+      <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900 font-khmer">
+        {typeof category.name === "string"
+          ? "-"
+          : category.name?.km}
+      </td>
+      <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500">
+        {typeof category.description === "string"
+          ? category.description
+          : category.description?.en || "-"}
+      </td>
+      <td className="hidden lg:table-cell px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 font-khmer">
+        {typeof category.description === "string"
+          ? "-"
+          : category.description?.km || "-"}
+      </td>
+      <td className="px-3 sm:px-6 py-3 sm:py-4">
+        <div className="flex items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 rounded hover:bg-gray-100">
+                <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-32 sm:w-40"
+            >
+              <DropdownMenuItem
+                onSelect={() => onEdit(category)}
+                className="text-xs sm:text-sm"
+              >
+                <Edit2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />{" "}
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                variant="destructive"
+                onSelect={() => onDelete(category.firestoreId || category.id)}
+                className="text-xs sm:text-sm"
+              >
+                <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-red-600" />{" "}
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
 export default function CategoriesTab() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -42,11 +150,74 @@ export default function CategoriesTab() {
   const { data: categories = [], isLoading: loading } = useCategoriesQuery(
     async () => {
       const data = await getCategories();
-      return data.map((d) => ({ ...d, id: d.id || "" })) as Category[];
+      const categoriesData = data.map((d) => ({ ...d, id: d.id || "" })) as Category[];
+      // Ensure categories are sorted by sortOrder
+      return categoriesData.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     },
   );
 
+  // Use local state for drag-and-drop with memoized initialization
+  const [localCategories, setLocalCategories] = useState<Category[]>(() => categories);
+
+  // Use a ref to track if we're dragging to avoid unnecessary updates
+  const isDraggingRef = React.useRef(false);
+  const prevCategoriesRef = React.useRef<string>('');
+
+  // Update local categories when data actually changes, but only if not currently dragging
+  React.useEffect(() => {
+    const categoriesKey = JSON.stringify(categories.map(c => ({ id: c.id, sortOrder: c.sortOrder })));
+    
+    if (!isDraggingRef.current && prevCategoriesRef.current !== categoriesKey) {
+      prevCategoriesRef.current = categoriesKey;
+      setLocalCategories(categories);
+    }
+  }, [categories]);
+
   const invalidateCategories = useInvalidateCategories();
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragStart = () => {
+    isDraggingRef.current = true;
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    isDraggingRef.current = false;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = localCategories.findIndex((cat) => cat.id === active.id);
+      const newIndex = localCategories.findIndex((cat) => cat.id === over.id);
+
+      const newCategories = arrayMove(localCategories, oldIndex, newIndex);
+      
+      // Update local state immediately for smooth UX
+      setLocalCategories(newCategories);
+
+      // Update sortOrder for all categories
+      try {
+        const updates = newCategories.map((cat, index) => {
+          const docId = cat.firestoreId || cat.id;
+          return updateCategory(docId, { sortOrder: index });
+        });
+
+        await Promise.all(updates);
+        invalidateCategories(); // Refresh cache
+        toast.success("Category order updated successfully");
+      } catch (error) {
+        console.error("Failed to update category order:", error);
+        toast.error("Failed to update category order");
+        // Revert on error
+        setLocalCategories(categories);
+      }
+    }
+  };
 
   const handleAddCategory = () => {
     setEditingCategory(null);
@@ -99,7 +270,10 @@ export default function CategoriesTab() {
         await updateCategory(docId, categoryData);
         toast.success("Category updated successfully");
       } else {
-        await addCategory(safeCategory);
+        // When adding new category, set sortOrder to the end
+        const maxSortOrder = Math.max(...localCategories.map(c => c.sortOrder ?? 0), -1);
+        const categoryWithOrder = { ...safeCategory, sortOrder: maxSortOrder + 1 };
+        await addCategory(categoryWithOrder);
         toast.success("Category added successfully");
       }
       invalidateCategories(); // Refresh cache
@@ -129,7 +303,7 @@ export default function CategoriesTab() {
           </button>
         </div>
 
-        {categories.length === 0 ? (
+        {localCategories.length === 0 ? (
           <div className="p-12 text-center">
             <FolderTree className="w-16 h-16 mx-auto text-gray-300 mb-4" />
             <p className="text-gray-500 mb-4">No categories yet</p>
@@ -142,88 +316,52 @@ export default function CategoriesTab() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
-                    Name (English)
-                  </th>
-                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
-                    Name (Khmer)
-                  </th>
-                  <th className="hidden md:table-cell px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
-                    Description (English)
-                  </th>
-                  <th className="hidden lg:table-cell px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
-                    Description (Khmer)
-                  </th>
-                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {categories.map((category) => (
-                  <tr key={category.id} className="hover:bg-gray-50">
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900">
-                      {typeof category.name === "string"
-                        ? category.name
-                        : category.name?.en}
-                    </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900 font-khmer">
-                      {typeof category.name === "string"
-                        ? "-"
-                        : category.name?.km}
-                    </td>
-                    <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500">
-                      {typeof category.description === "string"
-                        ? category.description
-                        : category.description?.en || "-"}
-                    </td>
-                    <td className="hidden lg:table-cell px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 font-khmer">
-                      {typeof category.description === "string"
-                        ? "-"
-                        : category.description?.km || "-"}
-                    </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4">
-                      <div className="flex items-center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button className="p-1 rounded hover:bg-gray-100">
-                              <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent
-                            align="end"
-                            className="w-32 sm:w-40"
-                          >
-                            <DropdownMenuItem
-                              onSelect={() => handleEditCategory(category)}
-                              className="text-xs sm:text-sm"
-                            >
-                              <Edit2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />{" "}
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              variant="destructive"
-                              onSelect={() =>
-                                handleDeleteCategory(
-                                  category.firestoreId || category.id,
-                                )
-                              }
-                              className="text-xs sm:text-sm"
-                            >
-                              <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-red-600" />{" "}
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </td>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase w-12">
+                      {/* Drag handle column */}
+                    </th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
+                      Name (English)
+                    </th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
+                      Name (Khmer)
+                    </th>
+                    <th className="hidden md:table-cell px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
+                      Description (English)
+                    </th>
+                    <th className="hidden lg:table-cell px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
+                      Description (Khmer)
+                    </th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <SortableContext
+                  items={localCategories.map(c => c.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <tbody className="divide-y divide-gray-200">
+                    {localCategories.map((category) => (
+                      <SortableRow
+                        key={category.id}
+                        category={category}
+                        onEdit={handleEditCategory}
+                        onDelete={handleDeleteCategory}
+                      />
+                    ))}
+                  </tbody>
+                </SortableContext>
+              </table>
+            </DndContext>
           </div>
         )}
       </div>

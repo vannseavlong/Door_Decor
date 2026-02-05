@@ -39,6 +39,9 @@ export default function ProductModal({
   onClose,
   onUpdateProductCode,
 }: ProductModalProps) {
+  // Sort categories by sortOrder
+  const sortedCategories = [...categories].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  
   const [formData, setFormData] = useState<{
     code: string;
     name: { en: string; km: string };
@@ -188,7 +191,7 @@ export default function ProductModal({
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((category) => (
+                {sortedCategories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {typeof category.name === "string"
                       ? category.name

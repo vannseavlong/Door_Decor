@@ -1,6 +1,5 @@
 import { db as adminDb } from "@/lib/firebase/server";
 import { QueryDocumentSnapshot, DocumentData } from "firebase-admin/firestore";
-import { unstable_cache } from "next/cache";
 
 const COLLECTION_NAME = "installations";
 const CACHE_TAG_INSTALLATIONS = "installations-list";
@@ -18,32 +17,27 @@ export type InstallationRecord = {
   date?: string;
 };
 
-export const getInstallationsServer = unstable_cache(
-  async (): Promise<InstallationRecord[]> => {
-    try {
-      const querySnapshot = await adminDb.collection(COLLECTION_NAME).get();
-      return querySnapshot.docs.map(
-        (doc: QueryDocumentSnapshot<DocumentData>) => {
-          const data = doc.data();
-          // Remove id field if it exists in data to prevent conflicts
-          delete data.id;
-          return {
-            id: doc.id, // Use Firestore document ID
-            ...data,
-          } as InstallationRecord;
-        },
-      );
-    } catch (error) {
-      console.error("Error getting installations:", error);
-      return [];
-    }
-  },
-  [CACHE_TAG_INSTALLATIONS],
-  {
-    revalidate: 60, // Cache for 60 seconds
-    tags: [CACHE_TAG_INSTALLATIONS],
-  },
-);
+// Removed unstable_cache to avoid cache size limit errors (installations with images can exceed 2MB)
+// Caching is handled at the page level with ISR (revalidate: 60)
+export async function getInstallationsServer(): Promise<InstallationRecord[]> {
+  try {
+    const querySnapshot = await adminDb.collection(COLLECTION_NAME).get();
+    return querySnapshot.docs.map(
+      (doc: QueryDocumentSnapshot<DocumentData>) => {
+        const data = doc.data();
+        // Remove id field if it exists in data to prevent conflicts
+        delete data.id;
+        return {
+          id: doc.id, // Use Firestore document ID
+          ...data,
+        } as InstallationRecord;
+      },
+    );
+  } catch (error) {
+    console.error("Error getting installations:", error);
+    return [];
+  }
+}
 
 export async function addInstallationServer(
   data: Omit<InstallationRecord, "id">,

@@ -44,6 +44,7 @@ export default function CategoryModal({
       id: category?.id || Date.now().toString(),
       name: formData.name,
       description: formData.description,
+      sortOrder: category?.sortOrder ?? 0,
       createdAt: category?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
