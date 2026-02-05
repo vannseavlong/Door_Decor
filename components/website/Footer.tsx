@@ -36,6 +36,13 @@ export default function Footer({ footerData, categories = [] }: FooterProps) {
   const { t, lang } = useTranslate();
   const currentLocale = lang || "en";
 
+  // Sort categories by sortOrder
+  const sortedCategories = [...categories].sort((a, b) => {
+    const aOrder = (a as any).sortOrder ?? 0;
+    const bOrder = (b as any).sortOrder ?? 0;
+    return aOrder - bOrder;
+  });
+
   // Helper to get category name based on locale
   const getCategoryName = (name: string | { en: string; km: string }) => {
     if (typeof name === "string") return name;
@@ -82,7 +89,7 @@ export default function Footer({ footerData, categories = [] }: FooterProps) {
               {t("quickLinks")}
             </h4>
             <ul className="space-y-2 body-sm">
-              {categories.map((cat) => {
+              {sortedCategories.map((cat) => {
                 const categoryName = getCategoryName(cat.name);
                 const categorySlug = slugify(categoryName);
                 return (

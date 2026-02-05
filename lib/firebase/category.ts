@@ -10,6 +10,7 @@ export type CategoryRecord = {
   firestoreId?: string; // Firestore document ID
   name: { en: string; km: string };
   description: { en: string; km: string };
+  sortOrder: number; // Order for displaying categories
   createdAt?: string;
   updatedAt?: string;
 };
@@ -19,7 +20,7 @@ export const getCategoriesServer = unstable_cache(
     try {
       const snap = await adminDb
         .collection(CATEGORIES)
-        .orderBy("createdAt", "desc")
+        .orderBy("sortOrder", "asc")
         .get();
       return snap.docs.map((d: QueryDocumentSnapshot<DocumentData>) => {
         const data = d.data();
@@ -37,14 +38,16 @@ export const getCategoriesServer = unstable_cache(
       // Fallback: fetch without ordering if orderBy fails
       try {
         const snap = await adminDb.collection(CATEGORIES).get();
-        return snap.docs.map((d: QueryDocumentSnapshot<DocumentData>) => {
-          const data = d.data();
+        const data = snap.docs.map((d: QueryDocumentSnapshot<DocumentData>) => {
+          const docData = d.data();
           return {
-            ...data,
+            ...docData,
             firestoreId: d.id, // Preserve Firestore document ID
             // Keep internal id field from document data (if exists)
           } as CategoryRecord;
         });
+        // Sort by sortOrder in memory if orderBy failed
+        return data.sort((a: CategoryRecord, b: CategoryRecord) => (a.sortOrder || 0) - (b.sortOrder || 0));
       } catch (fallbackError) {
         console.error("Error fetching categories:", fallbackError);
         return [];

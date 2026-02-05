@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Home,
@@ -35,10 +35,25 @@ type TabType =
   | "messages"
   | "footer";
 
+const STORAGE_KEY = "admin-active-tab";
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const { logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabType>("hero");
+  
+  // Initialize state from localStorage or default to "hero"
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return (saved as TabType) || "hero";
+    }
+    return "hero";
+  });
+
+  // Save to localStorage whenever tab changes
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, activeTab);
+  }, [activeTab]);
 
   const handleLogout = async () => {
     try {

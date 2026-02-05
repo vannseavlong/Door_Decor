@@ -222,6 +222,11 @@ export default function ProductsSection({ products, categories }: Props) {
     finalCategories.map((c) => ({ id: c.id, name: c.name })),
   );
 
+  // Sort categories by sortOrder
+  const sortedFinalCategories = [...finalCategories].sort(
+    (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
+  );
+
   const slugify = (s: string) =>
     encodeURIComponent(
       s
@@ -252,10 +257,10 @@ export default function ProductsSection({ products, categories }: Props) {
         </motion.div>
 
         <div className="space-y-10">
-          {finalCategories.map((cat, catIndex) => {
+          {sortedFinalCategories.map((cat, catIndex) => {
             const categoryName = getCategoryName(cat);
             const categorySlug = slugify(categoryName);
-            const isLastCategory = catIndex === finalCategories.length - 1;
+            const isLastCategory = catIndex === sortedFinalCategories.length - 1;
 
             return (
               <motion.div
